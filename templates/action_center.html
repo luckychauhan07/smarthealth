@@ -1,0 +1,451 @@
+{% extends "base.html" %} {% block content %}
+<div
+	class="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-12 px-4"
+>
+	<div class="max-w-6xl mx-auto">
+		<!-- Welcome Header -->
+		<div class="text-center mb-12">
+			<div
+				class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full mb-4 shadow-lg"
+			>
+				<span class="text-4xl">👋</span>
+			</div>
+			<h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-3">
+				Welcome back,
+				<span
+					class="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent"
+					>{{ user.username }}</span
+				>
+			</h1>
+			<p class="text-lg text-gray-600 max-w-2xl mx-auto">
+				Your personalized health journey starts here. Let's create your
+				custom plans to achieve your goals!
+			</p>
+		</div>
+
+		<!-- Status Cards -->
+		<div class="grid md:grid-cols-2 gap-8 mb-12">
+			<!-- Diet Plan Card -->
+			<div
+				class="group relative bg-white rounded-3xl shadow-xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-2"
+			>
+				<!-- Background Gradient Overlay -->
+				<div
+					class="absolute inset-0 bg-gradient-to-br from-green-50 to-emerald-50 opacity-50"
+				></div>
+
+				<!-- Content -->
+				<div class="relative p-8">
+					<!-- Icon -->
+					<div class="flex items-center justify-between mb-6">
+						<div
+							class="w-16 h-16 bg-gradient-to-br from-green-400 to-emerald-500 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform"
+						>
+							<span class="text-3xl">🥗</span>
+						</div>
+						{% if plan_status.has_diet_plan %}
+						<span
+							class="px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-semibold flex items-center gap-2"
+						>
+							<svg
+								class="w-4 h-4"
+								fill="currentColor"
+								viewBox="0 0 20 20"
+							>
+								<path
+									fill-rule="evenodd"
+									d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+									clip-rule="evenodd"
+								/>
+							</svg>
+							Active
+						</span>
+						{% else %}
+						<span
+							class="px-4 py-2 bg-orange-100 text-orange-700 rounded-full text-sm font-semibold"
+						>
+							Not Created
+						</span>
+						{% endif %}
+					</div>
+
+					<!-- Title & Description -->
+					<h2 class="text-2xl font-bold text-gray-800 mb-3">
+						Diet Plan
+					</h2>
+					<p class="text-gray-600 mb-6 leading-relaxed">
+						Get a personalized meal plan tailored to your goals,
+						dietary preferences, and nutritional needs
+					</p>
+
+					<!-- Features List -->
+					<ul class="space-y-3 mb-8">
+						<li class="flex items-start gap-3">
+							<svg
+								class="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0"
+								fill="currentColor"
+								viewBox="0 0 20 20"
+							>
+								<path
+									fill-rule="evenodd"
+									d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+									clip-rule="evenodd"
+								/>
+							</svg>
+							<span class="text-sm text-gray-700"
+								>Customized calorie targets</span
+							>
+						</li>
+						<li class="flex items-start gap-3">
+							<svg
+								class="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0"
+								fill="currentColor"
+								viewBox="0 0 20 20"
+							>
+								<path
+									fill-rule="evenodd"
+									d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+									clip-rule="evenodd"
+								/>
+							</svg>
+							<span class="text-sm text-gray-700"
+								>Macro-nutrient breakdown</span
+							>
+						</li>
+						<li class="flex items-start gap-3">
+							<svg
+								class="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0"
+								fill="currentColor"
+								viewBox="0 0 20 20"
+							>
+								<path
+									fill-rule="evenodd"
+									d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+									clip-rule="evenodd"
+								/>
+							</svg>
+							<span class="text-sm text-gray-700"
+								>Allergy-friendly recipes</span
+							>
+						</li>
+					</ul>
+
+					<!-- Action Button -->
+					{% if plan_status.has_diet_plan %}
+					<a
+						href="{% url 'diet' %}"
+						class="block w-full px-6 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold rounded-xl text-center hover:shadow-lg transition-all hover:scale-105"
+					>
+						<span class="flex items-center justify-center gap-2">
+							View My Diet Plan
+							<svg
+								class="w-5 h-5"
+								fill="none"
+								stroke="currentColor"
+								viewBox="0 0 24 24"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M9 5l7 7-7 7"
+								/>
+							</svg>
+						</span>
+					</a>
+					{% else %}
+					<form method="post" action="{% url 'generate_diet' %}">
+						{% csrf_token %}
+						<button
+							type="submit"
+							class="block w-full px-6 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl text-center hover:shadow-lg transition-all hover:scale-105"
+						>
+							<span
+								class="flex items-center justify-center gap-2"
+							>
+								<svg
+									class="w-5 h-5"
+									fill="none"
+									stroke="currentColor"
+									viewBox="0 0 24 24"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M12 4v16m8-8H4"
+									/>
+								</svg>
+								Generate Diet Plan
+							</span>
+						</button>
+					</form>
+					{% endif %}
+				</div>
+
+				<!-- Decorative Element -->
+				<div
+					class="absolute -bottom-6 -right-6 w-32 h-32 bg-green-200 rounded-full opacity-20 blur-2xl"
+				></div>
+			</div>
+
+			<!-- Workout Plan Card -->
+			<div
+				class="group relative bg-white rounded-3xl shadow-xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-2"
+			>
+				<!-- Background Gradient Overlay -->
+				<div
+					class="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-50 opacity-50"
+				></div>
+
+				<!-- Content -->
+				<div class="relative p-8">
+					<!-- Icon -->
+					<div class="flex items-center justify-between mb-6">
+						<div
+							class="w-16 h-16 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform"
+						>
+							<span class="text-3xl">💪</span>
+						</div>
+						{% if plan_status.has_workout_plan %}
+						<span
+							class="px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-semibold flex items-center gap-2"
+						>
+							<svg
+								class="w-4 h-4"
+								fill="currentColor"
+								viewBox="0 0 20 20"
+							>
+								<path
+									fill-rule="evenodd"
+									d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+									clip-rule="evenodd"
+								/>
+							</svg>
+							Active
+						</span>
+						{% else %}
+						<span
+							class="px-4 py-2 bg-orange-100 text-orange-700 rounded-full text-sm font-semibold"
+						>
+							Not Created
+						</span>
+						{% endif %}
+					</div>
+
+					<!-- Title & Description -->
+					<h2 class="text-2xl font-bold text-gray-800 mb-3">
+						Workout Plan
+					</h2>
+					<p class="text-gray-600 mb-6 leading-relaxed">
+						Custom exercise routines designed for your fitness
+						level, available time, and specific goals
+					</p>
+
+					<!-- Features List -->
+					<ul class="space-y-3 mb-8">
+						<li class="flex items-start gap-3">
+							<svg
+								class="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0"
+								fill="currentColor"
+								viewBox="0 0 20 20"
+							>
+								<path
+									fill-rule="evenodd"
+									d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+									clip-rule="evenodd"
+								/>
+							</svg>
+							<span class="text-sm text-gray-700"
+								>Level-appropriate exercises</span
+							>
+						</li>
+						<li class="flex items-start gap-3">
+							<svg
+								class="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0"
+								fill="currentColor"
+								viewBox="0 0 20 20"
+							>
+								<path
+									fill-rule="evenodd"
+									d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+									clip-rule="evenodd"
+								/>
+							</svg>
+							<span class="text-sm text-gray-700"
+								>Flexible scheduling</span
+							>
+						</li>
+						<li class="flex items-start gap-3">
+							<svg
+								class="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0"
+								fill="currentColor"
+								viewBox="0 0 20 20"
+							>
+								<path
+									fill-rule="evenodd"
+									d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+									clip-rule="evenodd"
+								/>
+							</svg>
+							<span class="text-sm text-gray-700"
+								>Progress tracking ready</span
+							>
+						</li>
+					</ul>
+
+					<!-- Action Button -->
+					{% if plan_status.has_workout_plan %}
+					<a
+						href="{% url 'workout' %}"
+						class="block w-full px-6 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold rounded-xl text-center hover:shadow-lg transition-all hover:scale-105"
+					>
+						<span class="flex items-center justify-center gap-2">
+							View My Workout Plan
+							<svg
+								class="w-5 h-5"
+								fill="none"
+								stroke="currentColor"
+								viewBox="0 0 24 24"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M9 5l7 7-7 7"
+								/>
+							</svg>
+						</span>
+					</a>
+					{% else %}
+					<form method="post" action="{% url 'generate_workout' %}">
+						{% csrf_token %}
+						<button
+							type="submit"
+							class="block w-full px-6 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl text-center hover:shadow-lg transition-all hover:scale-105"
+						>
+							<span
+								class="flex items-center justify-center gap-2"
+							>
+								<svg
+									class="w-5 h-5"
+									fill="none"
+									stroke="currentColor"
+									viewBox="0 0 24 24"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M12 4v16m8-8H4"
+									/>
+								</svg>
+								Generate Workout Plan
+							</span>
+						</button>
+					</form>
+					{% endif %}
+				</div>
+
+				<!-- Decorative Element -->
+				<div
+					class="absolute -bottom-6 -right-6 w-32 h-32 bg-blue-200 rounded-full opacity-20 blur-2xl"
+				></div>
+			</div>
+		</div>
+
+		<!-- Quick Stats / Motivational Section -->
+		<div class="bg-white rounded-3xl shadow-xl p-8 mb-8">
+			<div class="text-center mb-6">
+				<h3 class="text-2xl font-bold text-gray-800 mb-2">
+					🎯 Your Journey at a Glance
+				</h3>
+				<p class="text-gray-600">
+					Track your progress and stay motivated
+				</p>
+			</div>
+
+			<div class="grid md:grid-cols-3 gap-6">
+				<!-- Stat 1 -->
+				<div
+					class="text-center p-6 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-2xl"
+				>
+					<div
+						class="w-12 h-12 bg-gradient-to-br from-purple-400 to-indigo-500 rounded-full flex items-center justify-center mx-auto mb-3"
+					>
+						<span class="text-2xl">📋</span>
+					</div>
+					<h4 class="text-3xl font-bold text-gray-800 mb-1">
+						{{
+						plan_status.has_diet_plan|add:plan_status.has_workout_plan
+						}}/2
+					</h4>
+					<p class="text-sm text-gray-600">Plans Created</p>
+				</div>
+
+				<!-- Stat 2 -->
+				<div
+					class="text-center p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl"
+				>
+					<div
+						class="w-12 h-12 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-3"
+					>
+						<span class="text-2xl">🚀</span>
+					</div>
+					<h4 class="text-3xl font-bold text-gray-800 mb-1">Day 1</h4>
+					<p class="text-sm text-gray-600">Of Your Journey</p>
+				</div>
+
+				<!-- Stat 3 -->
+				<div
+					class="text-center p-6 bg-gradient-to-br from-orange-50 to-amber-50 rounded-2xl"
+				>
+					<div
+						class="w-12 h-12 bg-gradient-to-br from-orange-400 to-amber-500 rounded-full flex items-center justify-center mx-auto mb-3"
+					>
+						<span class="text-2xl">✨</span>
+					</div>
+					<h4 class="text-3xl font-bold text-gray-800 mb-1">100%</h4>
+					<p class="text-sm text-gray-600">Commitment Level</p>
+				</div>
+			</div>
+		</div>
+
+		<!-- Motivational Quote -->
+		<div
+			class="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-3xl shadow-xl p-8 text-white text-center"
+		>
+			<svg
+				class="w-12 h-12 mx-auto mb-4 opacity-50"
+				fill="currentColor"
+				viewBox="0 0 24 24"
+			>
+				<path
+					d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"
+				/>
+			</svg>
+			<blockquote class="text-xl md:text-2xl font-medium mb-4">
+				The journey of a thousand miles begins with a single step
+			</blockquote>
+			<p class="text-indigo-200 text-sm">- Ancient Proverb</p>
+		</div>
+	</div>
+</div>
+
+<style>
+	@keyframes float {
+		0%,
+		100% {
+			transform: translateY(0px);
+		}
+		50% {
+			transform: translateY(-10px);
+		}
+	}
+
+	.group:hover .w-16.h-16 {
+		animation: float 2s ease-in-out infinite;
+	}
+</style>
+
+{% endblock %}

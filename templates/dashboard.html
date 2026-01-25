@@ -1,0 +1,107 @@
+{% extends "base.html" %} {% block content %}
+<div
+	class="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-12 px-4"
+>
+	<div class="max-w-6xl mx-auto">
+		{% if error_message %}
+		<div class="bg-red-100 border-l-4 border-red-500 p-4 mb-8 rounded">
+			<p class="text-red-700 font-semibold">⚠️ {{ error_message }}</p>
+		</div>
+		{% endif %} {% if plan %}
+		<!-- Diet Plan Section -->
+		<div class="mb-12">
+			<div class="flex items-center gap-3 mb-6">
+				<span class="text-4xl">🍽️</span>
+				<h2 class="text-3xl font-bold text-gray-800">Your Diet Plan</h2>
+			</div>
+			<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+				{% for day_plan in plan.diet_plan %}
+				<div
+					class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition"
+				>
+					<h3 class="text-xl font-bold text-green-600 mb-4">
+						{{ day_plan.day }}
+					</h3>
+					<ul class="space-y-2">
+						{% for meal in day_plan.meals %}
+						<li class="flex items-start gap-2 text-gray-700">
+							<span class="text-green-500 font-bold">•</span>
+							<span>{{ meal }}</span>
+						</li>
+						{% endfor %}
+					</ul>
+				</div>
+				{% endfor %}
+			</div>
+		</div>
+
+		<!-- Workout Plan Section -->
+		<div class="mb-12">
+			<div class="flex items-center gap-3 mb-6">
+				<span class="text-4xl">💪</span>
+				<h2 class="text-3xl font-bold text-gray-800">
+					Your Workout Plan
+				</h2>
+			</div>
+			<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+				{% for workout_day in plan.workout_plan %}
+				<div
+					class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition"
+				>
+					<h3 class="text-xl font-bold text-blue-600 mb-4">
+						{{ workout_day.day }}
+					</h3>
+					<p class="text-gray-700 leading-relaxed">
+						{{ workout_day.workout }}
+					</p>
+				</div>
+				{% endfor %}
+			</div>
+		</div>
+
+		<!-- Tips Section -->
+		{% if plan.safety_tips %}
+		<div>
+			<div class="flex items-center gap-3 mb-6">
+				<span class="text-4xl">💡</span>
+				<h2 class="text-3xl font-bold text-gray-800">Health Tips</h2>
+			</div>
+			<div
+				class="bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-lg"
+			>
+				<ul class="space-y-3">
+					{% for tip in plan.safety_tips %}
+					<li class="flex items-start gap-3 text-yellow-900">
+						<span class="text-yellow-500 font-bold">✓</span>
+						<span>{{ tip }}</span>
+					</li>
+					{% endfor %}
+				</ul>
+			</div>
+		</div>
+		{% endif %} {% else %}
+		<!-- No Plan - Show Generate Button -->
+		<div class="max-w-md mx-auto">
+			<div class="bg-white rounded-lg shadow-lg p-8 text-center">
+				<h2 class="text-2xl font-bold text-gray-800 mb-4">
+					Let's Get Started! 🚀
+				</h2>
+				<p class="text-gray-600 mb-6">
+					Generate your personalized diet and workout plan based on
+					your profile
+				</p>
+				<form method="POST">
+					{% csrf_token %}
+					<button
+						type="submit"
+						class="w-full px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-lg hover:shadow-lg transition"
+					>
+						🚀 Generate My Plan
+					</button>
+				</form>
+			</div>
+		</div>
+		{% endif %}
+	</div>
+</div>
+{% endblock %}

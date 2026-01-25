@@ -1,0 +1,565 @@
+{% extends 'base.html' %} {% block content %}
+<!-- Hero Section -->
+<section
+	class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white"
+>
+	<div class="mx-auto max-w-6xl px-5 py-20 text-center">
+		<div class="mx-auto max-w-3xl">
+			<h1 class="text-4xl font-extrabold leading-tight sm:text-5xl">
+				Transform Your Fitness Journey
+			</h1>
+			<p class="mt-4 text-lg text-indigo-50">
+				Track your workouts, personalized meal plans, and achieve your
+				health goals with AI-powered insights
+			</p>
+			<div class="mt-8 flex flex-wrap items-center justify-center gap-4">
+				<a
+					href="/accounts/register"
+					class="inline-flex items-center justify-center rounded-xl bg-white px-6 py-3 text-base font-semibold text-indigo-600 shadow-lg transition duration-300 hover:shadow-xl hover:bg-slate-50 transform hover:scale-105"
+				>
+					create an account
+				</a>
+				<a
+					href="#features"
+					class="inline-flex items-center justify-center rounded-xl border-2 border-white px-6 py-3 text-base font-semibold text-white transition duration-300 hover:bg-white/10 transform hover:scale-105"
+				>
+					Learn More
+				</a>
+			</div>
+			<div
+				class="mt-12 grid gap-6 border-t border-white/20 pt-10 sm:grid-cols-3"
+			>
+				<div
+					class="rounded-2xl bg-white/10 p-4 shadow-sm shadow-black/10"
+				>
+					<h4 class="text-3xl font-bold">50,000+</h4>
+					<p class="text-indigo-50">Active Users</p>
+				</div>
+				<div
+					class="rounded-2xl bg-white/10 p-4 shadow-sm shadow-black/10"
+				>
+					<h4 class="text-3xl font-bold">4.8★</h4>
+					<p class="text-indigo-50">App Rating</p>
+				</div>
+				<div
+					class="rounded-2xl bg-white/10 p-4 shadow-sm shadow-black/10"
+				>
+					<h4 class="text-3xl font-bold">1M+</h4>
+					<p class="text-indigo-50">Workouts Tracked</p>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- Health Calculator Section -->
+<section class="bg-white px-5 py-16">
+	<div class="mx-auto max-w-6xl">
+		<h2 class="text-3xl font-bold text-slate-900 text-center">
+			Quick Health Assessment
+		</h2>
+		<p class="mt-3 text-center text-base text-slate-500">
+			Start your fitness journey by calculating your health metrics
+		</p>
+		<div class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+			<div
+				class="rounded-2xl bg-slate-50 p-8 shadow-lg transition duration-300 hover:-translate-y-1 hover:shadow-2xl"
+			>
+				<div class="text-4xl mb-4">⚖️</div>
+				<h3 class="text-xl font-semibold text-slate-900">
+					BMI Calculator
+				</h3>
+				<p class="mt-1 text-sm text-slate-500">
+					Calculate your Body Mass Index
+				</p>
+				<label
+					class="mt-4 block text-xs font-bold uppercase tracking-wider text-slate-700"
+					>Unit system</label
+				>
+				<select
+					id="unitSystem"
+					class="mt-1 w-full rounded-lg border-2 border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition duration-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 hover:border-slate-300"
+				>
+					<option value="metric">Metric (kg, cm)</option>
+					<option value="imperial">Imperial (lb, in)</option>
+				</select>
+				<div class="mt-3 grid gap-3 sm:grid-cols-2">
+					<div>
+						<label
+							class="block text-xs font-bold uppercase tracking-wider text-slate-700"
+							>Weight</label
+						>
+						<input
+							id="w"
+							placeholder="e.g., 70"
+							type="number"
+							step="0.1"
+							class="mt-1 w-full rounded-lg border-2 border-slate-200 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none transition duration-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 hover:border-slate-300"
+						/>
+						<p class="mt-1 text-[11px] text-slate-500">
+							kg or lb depending on selection
+						</p>
+					</div>
+					<div>
+						<label
+							class="block text-xs font-bold uppercase tracking-wider text-slate-700"
+							>Height</label
+						>
+						<input
+							id="h"
+							placeholder="e.g., 170"
+							type="number"
+							step="0.1"
+							class="mt-1 w-full rounded-lg border-2 border-slate-200 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none transition duration-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 hover:border-slate-300"
+						/>
+						<p class="mt-1 text-[11px] text-slate-500">
+							cm or inches depending on selection
+						</p>
+					</div>
+				</div>
+				<p class="mt-2 text-[11px] text-slate-500">
+					Healthy BMI range: 18.5 - 24.9
+				</p>
+				<button
+					onclick="calcBMI()"
+					class="mt-4 w-full rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-3 text-sm font-bold text-white shadow-lg transition duration-300 hover:shadow-xl hover:from-indigo-700 hover:to-purple-700 transform hover:scale-105"
+				>
+					Calculate BMI
+				</button>
+				<p
+					id="bmiOut"
+					class="mt-3 min-h-[24px] rounded-lg bg-indigo-50 px-3 py-2 text-sm font-semibold text-indigo-600"
+				></p>
+			</div>
+
+			<div
+				class="rounded-2xl bg-slate-50 p-8 shadow-lg transition duration-300 hover:-translate-y-1 hover:shadow-2xl"
+			>
+				<div class="text-4xl mb-4">🔥</div>
+				<h3 class="text-xl font-semibold text-slate-900">
+					Calorie Needs
+				</h3>
+				<p class="mt-1 text-sm text-slate-500">
+					Daily calorie requirement
+				</p>
+				<div class="mt-4 grid gap-3 sm:grid-cols-2">
+					<div>
+						<label
+							class="block text-xs font-bold uppercase tracking-wider text-slate-700"
+							>Age</label
+						>
+						<input
+							id="age"
+							placeholder="Years"
+							type="number"
+							class="mt-1 w-full rounded-lg border-2 border-slate-200 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none transition duration-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 hover:border-slate-300"
+						/>
+					</div>
+					<div>
+						<label
+							class="block text-xs font-bold uppercase tracking-wider text-slate-700"
+							>Gender</label
+						>
+						<select
+							id="gender"
+							class="mt-1 w-full rounded-lg border-2 border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition duration-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 hover:border-slate-300"
+						>
+							<option value="female">Female</option>
+							<option value="male">Male</option>
+						</select>
+					</div>
+				</div>
+				<div class="mt-3 grid gap-3 sm:grid-cols-2">
+					<div>
+						<label
+							class="block text-xs font-bold uppercase tracking-wider text-slate-700"
+							>Weight</label
+						>
+						<input
+							id="weightCal"
+							placeholder="kg"
+							type="number"
+							step="0.1"
+							class="mt-1 w-full rounded-lg border-2 border-slate-200 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none transition duration-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 hover:border-slate-300"
+						/>
+						<p class="mt-1 text-[11px] text-slate-500">
+							Use kg for best accuracy
+						</p>
+					</div>
+					<div>
+						<label
+							class="block text-xs font-bold uppercase tracking-wider text-slate-700"
+							>Height</label
+						>
+						<input
+							id="heightCal"
+							placeholder="cm"
+							type="number"
+							step="0.1"
+							class="mt-1 w-full rounded-lg border-2 border-slate-200 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none transition duration-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 hover:border-slate-300"
+						/>
+					</div>
+				</div>
+				<label
+					class="mt-3 block text-xs font-bold uppercase tracking-wider text-slate-700"
+					>Activity level</label
+				>
+				<select
+					id="activity"
+					class="mt-1 w-full rounded-lg border-2 border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition duration-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 hover:border-slate-300"
+				>
+					<option value="1.2">
+						Sedentary (little or no exercise)
+					</option>
+					<option value="1.375">
+						Lightly active (1-3 days/week)
+					</option>
+					<option value="1.55">
+						Moderately active (3-5 days/week)
+					</option>
+					<option value="1.725">Very active (6-7 days/week)</option>
+					<option value="1.9">Extra active (intense training)</option>
+				</select>
+				<p class="mt-2 text-[11px] text-slate-500">
+					Uses Mifflin-St Jeor (metric) + activity multiplier
+				</p>
+				<button
+					onclick="calcCalories()"
+					class="mt-4 w-full rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-3 text-sm font-bold text-white shadow-lg transition duration-300 hover:shadow-xl hover:from-indigo-700 hover:to-purple-700 transform hover:scale-105"
+				>
+					Calculate
+				</button>
+				<p
+					id="calorieOut"
+					class="mt-3 min-h-[24px] rounded-lg bg-indigo-50 px-3 py-2 text-sm font-semibold text-indigo-600"
+				></p>
+			</div>
+
+			<div
+				class="rounded-2xl bg-slate-50 p-8 shadow-lg transition duration-300 hover:-translate-y-1 hover:shadow-2xl"
+			>
+				<div class="text-4xl mb-4">💧</div>
+				<h3 class="text-xl font-semibold text-slate-900">
+					Hydration Goal
+				</h3>
+				<p class="mt-1 text-sm text-slate-500">
+					Daily water target based on weight and activity
+				</p>
+				<div class="mt-3 grid gap-3 sm:grid-cols-2">
+					<div>
+						<label
+							class="block text-xs font-bold uppercase tracking-wider text-slate-700"
+							>Weight (kg)</label
+						>
+						<input
+							id="weightHyd"
+							placeholder="e.g., 70"
+							type="number"
+							step="0.1"
+							class="mt-1 w-full rounded-lg border-2 border-slate-200 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none transition duration-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 hover:border-slate-300"
+						/>
+					</div>
+					<div>
+						<label
+							class="block text-xs font-bold uppercase tracking-wider text-slate-700"
+							>Active minutes</label
+						>
+						<input
+							id="activityHyd"
+							placeholder="e.g., 30"
+							type="number"
+							step="1"
+							class="mt-1 w-full rounded-lg border-2 border-slate-200 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none transition duration-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 hover:border-slate-300"
+						/>
+						<p class="mt-1 text-[11px] text-slate-500">
+							Optional: minutes of exercise today
+						</p>
+					</div>
+				</div>
+				<p class="mt-2 text-[11px] text-slate-500">
+					Baseline uses 33ml per kg + 350ml per 30 active minutes
+				</p>
+				<button
+					onclick="calcHydration()"
+					class="mt-4 w-full rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-3 text-sm font-bold text-white shadow-lg transition duration-300 hover:shadow-xl hover:from-indigo-700 hover:to-purple-700 transform hover:scale-105"
+				>
+					Calculate Hydration
+				</button>
+				<p
+					id="hydrationOut"
+					class="mt-3 min-h-[24px] rounded-lg bg-indigo-50 px-3 py-2 text-sm font-semibold text-indigo-600"
+				></p>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- Features Section -->
+<section id="features" class="bg-white px-5 py-16">
+	<div class="mx-auto max-w-6xl">
+		<h2 class="text-3xl font-bold text-slate-900 text-center">
+			Why Choose SmartHealth?
+		</h2>
+		<p class="mt-3 text-center text-base text-slate-500">
+			Everything you need to achieve your fitness goals
+		</p>
+		<div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+			<div
+				class="rounded-2xl bg-white p-8 text-center shadow-lg transition duration-300 hover:-translate-y-1 hover:shadow-2xl"
+			>
+				<div class="mb-3 text-4xl">📊</div>
+				<h3 class="text-lg font-semibold text-slate-900">
+					Smart Tracking
+				</h3>
+				<p class="mt-2 text-sm text-slate-500">
+					Track workouts, meals, sleep, and water intake in one place
+				</p>
+			</div>
+			<div
+				class="rounded-2xl bg-white p-8 text-center shadow-lg transition duration-300 hover:-translate-y-1 hover:shadow-2xl"
+			>
+				<div class="mb-3 text-4xl">🎯</div>
+				<h3 class="text-lg font-semibold text-slate-900">
+					Goal Setting
+				</h3>
+				<p class="mt-2 text-sm text-slate-500">
+					Set realistic goals and get daily motivation to achieve them
+				</p>
+			</div>
+			<div
+				class="rounded-2xl bg-white p-8 text-center shadow-lg transition duration-300 hover:-translate-y-1 hover:shadow-2xl"
+			>
+				<div class="mb-3 text-4xl">📈</div>
+				<h3 class="text-lg font-semibold text-slate-900">
+					Progress Analytics
+				</h3>
+				<p class="mt-2 text-sm text-slate-500">
+					Visual charts and detailed reports of your fitness progress
+				</p>
+			</div>
+			<div
+				class="rounded-2xl bg-white p-8 text-center shadow-lg transition duration-300 hover:-translate-y-1 hover:shadow-2xl"
+			>
+				<div class="mb-3 text-4xl">🥗</div>
+				<h3 class="text-lg font-semibold text-slate-900">Meal Plans</h3>
+				<p class="mt-2 text-sm text-slate-500">
+					Customized nutrition plans based on your goals and
+					preferences
+				</p>
+			</div>
+			<div
+				class="rounded-2xl bg-white p-8 text-center shadow-lg transition duration-300 hover:-translate-y-1 hover:shadow-2xl"
+			>
+				<div class="mb-3 text-4xl">💪</div>
+				<h3 class="text-lg font-semibold text-slate-900">
+					Workout Library
+				</h3>
+				<p class="mt-2 text-sm text-slate-500">
+					500+ exercises with video tutorials and form guides
+				</p>
+			</div>
+			<div
+				class="rounded-2xl bg-white p-8 text-center shadow-lg transition duration-300 hover:-translate-y-1 hover:shadow-2xl"
+			>
+				<div class="mb-3 text-4xl">🤖</div>
+				<h3 class="text-lg font-semibold text-slate-900">
+					AI Insights
+				</h3>
+				<p class="mt-2 text-sm text-slate-500">
+					Personalized recommendations based on your activity patterns
+				</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- Testimonials Section -->
+<section id="testimonials" class="bg-bg px-5 py-16">
+	<div class="mx-auto max-w-6xl">
+		<h2 class="text-3xl font-bold text-slate-900 text-center">
+			Success Stories
+		</h2>
+		<p class="mt-3 text-center text-base text-slate-500">
+			Join thousands of people transforming their lives
+		</p>
+		<div class="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+			<div
+				class="rounded-2xl bg-slate-50 p-8 shadow-lg transition duration-300 hover:-translate-y-1 hover:shadow-2xl"
+			>
+				<div class="mb-3 text-lg">⭐⭐⭐⭐⭐</div>
+				<p class="text-base text-slate-800">
+					"SmartHealth helped me lose 15kg in 3 months. The
+					personalized plans are amazing!"
+				</p>
+				<div class="mt-6 flex items-center gap-3">
+					<div
+						class="flex h-12 w-12 items-center justify-center rounded-full bg-white text-2xl"
+					>
+						👩
+					</div>
+					<div>
+						<h4 class="text-sm font-semibold text-slate-900">
+							Sarah Johnson
+						</h4>
+						<p class="text-xs text-slate-500">Lost 15kg</p>
+					</div>
+				</div>
+			</div>
+			<div
+				class="rounded-2xl bg-slate-50 p-8 shadow-lg transition duration-300 hover:-translate-y-1 hover:shadow-2xl"
+			>
+				<div class="mb-3 text-lg">⭐⭐⭐⭐⭐</div>
+				<p class="text-base text-slate-800">
+					"The workout tracking feature keeps me accountable. Love the
+					progress charts!"
+				</p>
+				<div class="mt-6 flex items-center gap-3">
+					<div
+						class="flex h-12 w-12 items-center justify-center rounded-full bg-white text-2xl"
+					>
+						👨
+					</div>
+					<div>
+						<h4 class="text-sm font-semibold text-slate-900">
+							Mike Chen
+						</h4>
+						<p class="text-xs text-slate-500">Built lean muscle</p>
+					</div>
+				</div>
+			</div>
+			<div
+				class="rounded-2xl bg-slate-50 p-8 shadow-lg transition duration-300 hover:-translate-y-1 hover:shadow-2xl"
+			>
+				<div class="mb-3 text-lg">⭐⭐⭐⭐⭐</div>
+				<p class="text-base text-slate-800">
+					"Best fitness app I've ever used. The AI recommendations are
+					spot on!"
+				</p>
+				<div class="mt-6 flex items-center gap-3">
+					<div
+						class="flex h-12 w-12 items-center justify-center rounded-full bg-white text-2xl"
+					>
+						👱‍♀️
+					</div>
+					<div>
+						<h4 class="text-sm font-semibold text-slate-900">
+							Emily Rodriguez
+						</h4>
+						<p class="text-xs text-slate-500">Fitness enthusiast</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- Pricing Section -->
+<section
+	id="pricing"
+	class="bg-gradient-to-br from-slate-50 to-slate-100 px-5 py-16"
+>
+	<div class="mx-auto max-w-6xl">
+		<h2 class="text-3xl font-bold text-slate-900 text-center">
+			Simple, Transparent Pricing
+		</h2>
+		<p class="mt-3 text-center text-base text-slate-500">
+			Choose the plan that fits your needs
+		</p>
+		<div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+			<div
+				class="relative rounded-2xl border border-transparent bg-white p-8 text-center shadow-lg transition duration-300 hover:-translate-y-1 hover:shadow-2xl"
+			>
+				<h3 class="text-xl font-semibold text-slate-900">Free</h3>
+				<div class="mt-3 text-4xl font-bold text-indigo-600">
+					$0<span class="text-base font-normal text-slate-500"
+						>/month</span
+					>
+				</div>
+				<ul class="mt-6 space-y-3 text-left text-sm text-slate-900">
+					<li>✓ BMI Calculator</li>
+					<li>✓ Basic Dashboard</li>
+					<li>✓ Limited Workouts</li>
+					<li>✗ Meal Plans</li>
+					<li>✗ Progress Analytics</li>
+				</ul>
+				<button
+					class="mt-6 w-full rounded-lg border-2 border-indigo-600 px-4 py-3 text-sm font-bold text-indigo-600 transition duration-200 hover:bg-indigo-50 transform hover:scale-105"
+				>
+					Get Started
+				</button>
+			</div>
+			<div
+				class="relative rounded-2xl border-2 border-indigo-600 bg-white p-8 text-center shadow-2xl"
+			>
+				<div
+					class="absolute right-4 top-4 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 px-3 py-1 text-xs font-bold text-white"
+				>
+					Most Popular
+				</div>
+				<h3 class="text-xl font-semibold text-slate-900">Pro</h3>
+				<div class="mt-3 text-4xl font-bold text-indigo-600">
+					$9.99<span class="text-base font-normal text-slate-500"
+						>/month</span
+					>
+				</div>
+				<ul class="mt-6 space-y-3 text-left text-sm text-slate-900">
+					<li>✓ Everything in Free</li>
+					<li>✓ Personalized Meal Plans</li>
+					<li>✓ Advanced Analytics</li>
+					<li>✓ Workout Programs</li>
+					<li>✓ Priority Support</li>
+				</ul>
+				<button
+					class="mt-6 w-full rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-3 text-sm font-bold text-white shadow-lg transition duration-300 hover:shadow-xl hover:from-indigo-700 hover:to-purple-700 transform hover:scale-105"
+				>
+					Start Free Trial
+				</button>
+			</div>
+			<div
+				class="relative rounded-2xl border border-transparent bg-white p-8 text-center shadow-lg transition duration-300 hover:-translate-y-1 hover:shadow-2xl"
+			>
+				<h3 class="text-xl font-semibold text-slate-900">Premium+</h3>
+				<div class="mt-3 text-4xl font-bold text-indigo-600">
+					$19.99<span class="text-base font-normal text-slate-500"
+						>/month</span
+					>
+				</div>
+				<ul class="mt-6 space-y-3 text-left text-sm text-slate-900">
+					<li>✓ Everything in Pro</li>
+					<li>✓ 1-on-1 Coaching</li>
+					<li>✓ Nutrition Consultation</li>
+					<li>✓ Custom Meal Plans</li>
+					<li>✓ VIP Support</li>
+				</ul>
+				<button
+					class="mt-6 w-full rounded-lg border-2 border-indigo-600 px-4 py-3 text-sm font-bold text-indigo-600 transition duration-200 hover:bg-indigo-50 transform hover:scale-105"
+				>
+					Upgrade
+				</button>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- CTA Section -->
+<section
+	class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 px-5 py-16 text-center text-white"
+>
+	<div class="mx-auto max-w-4xl">
+		<h2 class="text-3xl font-bold">Ready to Transform Your Health?</h2>
+		<p class="mt-3 text-base text-indigo-50">
+			Join 50,000+ users who are already achieving their fitness goals
+		</p>
+		<a
+			href="auth.html"
+			class="mt-6 inline-flex items-center justify-center rounded-xl bg-white px-6 py-3 text-base font-bold text-indigo-600 shadow-lg transition duration-300 hover:shadow-xl hover:bg-slate-50 transform hover:scale-105"
+		>
+			Start Your Free Trial Today
+		</a>
+		<p class="mt-3 text-xs text-indigo-100">
+			No credit card required • Cancel anytime
+		</p>
+	</div>
+</section>
+
+{% endblock %}

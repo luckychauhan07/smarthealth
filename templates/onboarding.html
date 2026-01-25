@@ -1,0 +1,1160 @@
+{% extends "base.html" %} {% block content %}
+<div
+	class="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-12 px-4"
+>
+	<div class="max-w-3xl mx-auto">
+		<!-- Progress Bar -->
+		<div class="mb-8">
+			<div class="flex items-center justify-between mb-2">
+				<span class="text-sm font-medium text-gray-700"
+					>Your Progress</span
+				>
+				<span
+					id="progressText"
+					class="text-sm font-medium text-indigo-600"
+					>0% Complete</span
+				>
+			</div>
+			<div class="w-full bg-gray-200 rounded-full h-2">
+				<div
+					id="progressBar"
+					class="bg-gradient-to-r from-indigo-500 to-purple-600 h-2 rounded-full transition-all duration-300"
+					style="width: 0%"
+				></div>
+			</div>
+		</div>
+
+		<!-- Main Card -->
+		<div class="bg-white rounded-3xl shadow-2xl overflow-hidden">
+			<!-- Header Section -->
+			<div
+				class="bg-gradient-to-r from-indigo-600 to-purple-600 px-8 py-10 text-white"
+			>
+				<div class="flex items-center gap-3 mb-3">
+					<div
+						class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-2xl backdrop-blur"
+					>
+						🎯
+					</div>
+					<div>
+						<h1 class="text-3xl font-bold">
+							Your Health Journey Starts Here
+						</h1>
+						<p class="text-indigo-100 mt-1">
+							Let's create your personalized wellness plan
+						</p>
+					</div>
+				</div>
+			</div>
+
+			<form method="POST" id="healthForm" class="p-8">
+				{% csrf_token %}
+
+				<!-- Section 1: About You -->
+				<div class="form-section active">
+					<div class="mb-6">
+						<div class="flex items-center gap-3 mb-4">
+							<span class="text-3xl">👤</span>
+							<h2 class="text-2xl font-bold text-gray-800">
+								Tell us about yourself
+							</h2>
+						</div>
+						<p class="text-gray-600">
+							Basic information to get started
+						</p>
+					</div>
+
+					<div class="space-y-6">
+						<div class="grid md:grid-cols-3 gap-4">
+							<div class="form-group">
+								<label
+									class="block text-sm font-semibold text-gray-700 mb-2"
+									>Age</label
+								>
+								<input
+									type="number"
+									name="age"
+									required
+									min="10"
+									max="120"
+									class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition outline-none"
+									placeholder="25"
+								/>
+							</div>
+							<div class="form-group">
+								<label
+									class="block text-sm font-semibold text-gray-700 mb-2"
+									>Height (cm)</label
+								>
+								<input
+									type="number"
+									name="height"
+									step="0.1"
+									required
+									min="100"
+									max="250"
+									id="height"
+									class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition outline-none"
+									placeholder="170"
+								/>
+							</div>
+							<div class="form-group">
+								<label
+									class="block text-sm font-semibold text-gray-700 mb-2"
+									>Weight (kg)</label
+								>
+								<input
+									type="number"
+									name="weight"
+									step="0.1"
+									required
+									min="30"
+									max="300"
+									id="weight"
+									class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition outline-none"
+									placeholder="70"
+								/>
+							</div>
+						</div>
+
+						<!-- BMI Card -->
+						<div
+							class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-6 border-2 border-indigo-100"
+						>
+							<div class="flex items-center justify-between">
+								<div>
+									<p class="text-sm text-gray-600 mb-1">
+										Your BMI
+									</p>
+									<p
+										id="bmiValue"
+										class="text-4xl font-bold text-gray-800"
+									>
+										--
+									</p>
+									<p
+										id="bmiCategory"
+										class="text-sm text-gray-600 mt-1"
+									></p>
+								</div>
+								<div class="text-6xl">📊</div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label
+								class="block text-sm font-semibold text-gray-700 mb-3"
+								>Gender</label
+							>
+							<div class="grid grid-cols-3 gap-3">
+								<label class="radio-card">
+									<input
+										type="radio"
+										name="gender"
+										value="male"
+										required
+										class="hidden"
+									/>
+									<div class="card-content">
+										<span class="text-3xl mb-2">👨</span>
+										<span class="font-semibold">Male</span>
+									</div>
+								</label>
+								<label class="radio-card">
+									<input
+										type="radio"
+										name="gender"
+										value="female"
+										class="hidden"
+									/>
+									<div class="card-content">
+										<span class="text-3xl mb-2">👩</span>
+										<span class="font-semibold"
+											>Female</span
+										>
+									</div>
+								</label>
+								<label class="radio-card">
+									<input
+										type="radio"
+										name="gender"
+										value="other"
+										class="hidden"
+									/>
+									<div class="card-content">
+										<span class="text-3xl mb-2">⚧</span>
+										<span class="font-semibold">Other</span>
+									</div>
+								</label>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Section 2: Your Goals -->
+				<div class="form-section">
+					<div class="mb-6">
+						<div class="flex items-center gap-3 mb-4">
+							<span class="text-3xl">🎯</span>
+							<h2 class="text-2xl font-bold text-gray-800">
+								What are your goals?
+							</h2>
+						</div>
+						<p class="text-gray-600">
+							Define what you want to achieve
+						</p>
+					</div>
+
+					<div class="space-y-6">
+						<div class="form-group">
+							<label
+								class="block text-sm font-semibold text-gray-700 mb-3"
+								>Primary Goal</label
+							>
+							<div class="grid md:grid-cols-2 gap-3">
+								<label class="radio-card-lg">
+									<input
+										type="radio"
+										name="goal"
+										value="weight_loss"
+										required
+										class="hidden"
+									/>
+									<div class="card-content">
+										<span class="text-4xl mb-2">🔥</span>
+										<span class="font-semibold text-lg"
+											>Weight Loss</span
+										>
+										<span class="text-xs text-gray-500"
+											>Burn fat & get lean</span
+										>
+									</div>
+								</label>
+								<label class="radio-card-lg">
+									<input
+										type="radio"
+										name="goal"
+										value="muscle_gain"
+										class="hidden"
+									/>
+									<div class="card-content">
+										<span class="text-4xl mb-2">💪</span>
+										<span class="font-semibold text-lg"
+											>Muscle Gain</span
+										>
+										<span class="text-xs text-gray-500"
+											>Build strength & size</span
+										>
+									</div>
+								</label>
+								<label class="radio-card-lg">
+									<input
+										type="radio"
+										name="goal"
+										value="general_fitness"
+										class="hidden"
+									/>
+									<div class="card-content">
+										<span class="text-4xl mb-2">⚡</span>
+										<span class="font-semibold text-lg"
+											>General Fitness</span
+										>
+										<span class="text-xs text-gray-500"
+											>Stay healthy & active</span
+										>
+									</div>
+								</label>
+								<label class="radio-card-lg">
+									<input
+										type="radio"
+										name="goal"
+										value="endurance"
+										class="hidden"
+									/>
+									<div class="card-content">
+										<span class="text-4xl mb-2">🏃</span>
+										<span class="font-semibold text-lg"
+											>Endurance</span
+										>
+										<span class="text-xs text-gray-500"
+											>Boost stamina</span
+										>
+									</div>
+								</label>
+							</div>
+						</div>
+
+						<div class="grid md:grid-cols-2 gap-4">
+							<div class="form-group">
+								<label
+									class="block text-sm font-semibold text-gray-700 mb-2"
+									>Target Weight (kg)</label
+								>
+								<input
+									type="number"
+									name="target_weight"
+									step="0.1"
+									required
+									min="30"
+									max="300"
+									class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition outline-none"
+									placeholder="65"
+								/>
+							</div>
+							<div class="form-group">
+								<label
+									class="block text-sm font-semibold text-gray-700 mb-2"
+									>Achieve in</label
+								>
+								<select
+									name="timeframe"
+									required
+									class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition outline-none"
+								>
+									<option value="">Select timeframe</option>
+									<option value="1">1 Month</option>
+									<option value="2">2 Months</option>
+									<option value="3">3 Months</option>
+									<option value="6">6 Months</option>
+									<option value="12">1 Year</option>
+								</select>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Section 3: Activity & Fitness -->
+				<div class="form-section">
+					<div class="mb-6">
+						<div class="flex items-center gap-3 mb-4">
+							<span class="text-3xl">🏃</span>
+							<h2 class="text-2xl font-bold text-gray-800">
+								Your activity level
+							</h2>
+						</div>
+						<p class="text-gray-600">
+							How active are you currently?
+						</p>
+					</div>
+
+					<div class="space-y-6">
+						<div class="form-group">
+							<label
+								class="block text-sm font-semibold text-gray-700 mb-3"
+								>Current Activity Level</label
+							>
+							<div class="grid md:grid-cols-2 gap-3">
+								<label class="radio-card-lg">
+									<input
+										type="radio"
+										name="activity"
+										value="sedentary"
+										required
+										class="hidden"
+									/>
+									<div class="card-content">
+										<span class="text-4xl mb-2">🪑</span>
+										<span class="font-semibold"
+											>Sedentary</span
+										>
+										<span class="text-xs text-gray-500"
+											>Little to no exercise</span
+										>
+									</div>
+								</label>
+								<label class="radio-card-lg">
+									<input
+										type="radio"
+										name="activity"
+										value="light"
+										class="hidden"
+									/>
+									<div class="card-content">
+										<span class="text-4xl mb-2">🚶</span>
+										<span class="font-semibold"
+											>Light Active</span
+										>
+										<span class="text-xs text-gray-500"
+											>Exercise 1-3 days/week</span
+										>
+									</div>
+								</label>
+								<label class="radio-card-lg">
+									<input
+										type="radio"
+										name="activity"
+										value="moderate"
+										class="hidden"
+									/>
+									<div class="card-content">
+										<span class="text-4xl mb-2">🏃</span>
+										<span class="font-semibold"
+											>Moderate</span
+										>
+										<span class="text-xs text-gray-500"
+											>Exercise 3-5 days/week</span
+										>
+									</div>
+								</label>
+								<label class="radio-card-lg">
+									<input
+										type="radio"
+										name="activity"
+										value="very_active"
+										class="hidden"
+									/>
+									<div class="card-content">
+										<span class="text-4xl mb-2">🏋️</span>
+										<span class="font-semibold"
+											>Very Active</span
+										>
+										<span class="text-xs text-gray-500"
+											>Exercise 6-7 days/week</span
+										>
+									</div>
+								</label>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label
+								class="block text-sm font-semibold text-gray-700 mb-3"
+								>Fitness Experience</label
+							>
+							<div class="grid grid-cols-3 gap-3">
+								<label class="radio-card">
+									<input
+										type="radio"
+										name="experience"
+										value="beginner"
+										required
+										class="hidden"
+									/>
+									<div class="card-content">
+										<span class="text-3xl mb-2">🌱</span>
+										<span class="font-semibold"
+											>Beginner</span
+										>
+									</div>
+								</label>
+								<label class="radio-card">
+									<input
+										type="radio"
+										name="experience"
+										value="intermediate"
+										class="hidden"
+									/>
+									<div class="card-content">
+										<span class="text-3xl mb-2">💪</span>
+										<span class="font-semibold"
+											>Intermediate</span
+										>
+									</div>
+								</label>
+								<label class="radio-card">
+									<input
+										type="radio"
+										name="experience"
+										value="advanced"
+										class="hidden"
+									/>
+									<div class="card-content">
+										<span class="text-3xl mb-2">🏆</span>
+										<span class="font-semibold"
+											>Advanced</span
+										>
+									</div>
+								</label>
+							</div>
+						</div>
+
+						<div class="grid md:grid-cols-2 gap-4">
+							<div class="form-group">
+								<label
+									class="block text-sm font-semibold text-gray-700 mb-2"
+									>Workout days/week</label
+								>
+								<select
+									name="workout_days"
+									required
+									class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition outline-none"
+								>
+									<option value="">Select</option>
+									<option value="2">2 days</option>
+									<option value="3">3 days</option>
+									<option value="4">4 days</option>
+									<option value="5">5 days</option>
+									<option value="6">6 days</option>
+									<option value="7">7 days</option>
+								</select>
+							</div>
+							<div class="form-group">
+								<label
+									class="block text-sm font-semibold text-gray-700 mb-2"
+									>Time per session</label
+								>
+								<select
+									name="workout_duration"
+									required
+									class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition outline-none"
+								>
+									<option value="">Select</option>
+									<option value="30">30 minutes</option>
+									<option value="45">45 minutes</option>
+									<option value="60">60 minutes</option>
+									<option value="90">90 minutes</option>
+								</select>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label
+								class="block text-sm font-semibold text-gray-700 mb-3"
+								>Workout Preferences</label
+							>
+							<div class="grid md:grid-cols-3 gap-3">
+								<label class="checkbox-card">
+									<input
+										type="checkbox"
+										name="workout_type[]"
+										value="gym"
+										class="hidden"
+									/>
+									<div class="card-content">
+										<span class="text-3xl mb-1">🏋️</span>
+										<span class="font-semibold text-sm"
+											>Gym</span
+										>
+									</div>
+								</label>
+								<label class="checkbox-card">
+									<input
+										type="checkbox"
+										name="workout_type[]"
+										value="home"
+										class="hidden"
+									/>
+									<div class="card-content">
+										<span class="text-3xl mb-1">🏠</span>
+										<span class="font-semibold text-sm"
+											>Home</span
+										>
+									</div>
+								</label>
+								<label class="checkbox-card">
+									<input
+										type="checkbox"
+										name="workout_type[]"
+										value="cardio"
+										class="hidden"
+									/>
+									<div class="card-content">
+										<span class="text-3xl mb-1">🏃</span>
+										<span class="font-semibold text-sm"
+											>Cardio</span
+										>
+									</div>
+								</label>
+								<label class="checkbox-card">
+									<input
+										type="checkbox"
+										name="workout_type[]"
+										value="strength"
+										class="hidden"
+									/>
+									<div class="card-content">
+										<span class="text-3xl mb-1">💪</span>
+										<span class="font-semibold text-sm"
+											>Strength</span
+										>
+									</div>
+								</label>
+								<label class="checkbox-card">
+									<input
+										type="checkbox"
+										name="workout_type[]"
+										value="yoga"
+										class="hidden"
+									/>
+									<div class="card-content">
+										<span class="text-3xl mb-1">🧘</span>
+										<span class="font-semibold text-sm"
+											>Yoga</span
+										>
+									</div>
+								</label>
+								<label class="checkbox-card">
+									<input
+										type="checkbox"
+										name="workout_type[]"
+										value="hiit"
+										class="hidden"
+									/>
+									<div class="card-content">
+										<span class="text-3xl mb-1">⚡</span>
+										<span class="font-semibold text-sm"
+											>HIIT</span
+										>
+									</div>
+								</label>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Section 4: Nutrition -->
+				<div class="form-section">
+					<div class="mb-6">
+						<div class="flex items-center gap-3 mb-4">
+							<span class="text-3xl">🍽️</span>
+							<h2 class="text-2xl font-bold text-gray-800">
+								Your nutrition preferences
+							</h2>
+						</div>
+						<p class="text-gray-600">Tell us about your diet</p>
+					</div>
+
+					<div class="space-y-6">
+						<div class="form-group">
+							<label
+								class="block text-sm font-semibold text-gray-700 mb-3"
+								>Diet Type</label
+							>
+							<div class="grid md:grid-cols-3 gap-3">
+								<label class="radio-card">
+									<input
+										type="radio"
+										name="diet"
+										value="vegetarian"
+										required
+										class="hidden"
+									/>
+									<div class="card-content">
+										<span class="text-3xl mb-2">🥗</span>
+										<span class="font-semibold"
+											>Vegetarian</span
+										>
+									</div>
+								</label>
+								<label class="radio-card">
+									<input
+										type="radio"
+										name="diet"
+										value="non_vegetarian"
+										class="hidden"
+									/>
+									<div class="card-content">
+										<span class="text-3xl mb-2">🍗</span>
+										<span class="font-semibold"
+											>Non-Veg</span
+										>
+									</div>
+								</label>
+								<label class="radio-card">
+									<input
+										type="radio"
+										name="diet"
+										value="vegan"
+										class="hidden"
+									/>
+									<div class="card-content">
+										<span class="text-3xl mb-2">🌱</span>
+										<span class="font-semibold">Vegan</span>
+									</div>
+								</label>
+							</div>
+						</div>
+
+						<div class="grid md:grid-cols-2 gap-4">
+							<div class="form-group">
+								<label
+									class="block text-sm font-semibold text-gray-700 mb-2"
+									>Meals per day</label
+								>
+								<select
+									name="meals_per_day"
+									required
+									class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition outline-none"
+								>
+									<option value="">Select</option>
+									<option value="3">3 meals</option>
+									<option value="4">4 meals</option>
+									<option value="5">5 meals</option>
+									<option value="6">6 meals</option>
+								</select>
+							</div>
+							<div class="form-group">
+								<label
+									class="block text-sm font-semibold text-gray-700 mb-2"
+									>Daily water intake</label
+								>
+								<select
+									name="water_intake"
+									required
+									class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition outline-none"
+								>
+									<option value="">Select</option>
+									<option value="less_1">Less than 1L</option>
+									<option value="1_2">1-2 liters</option>
+									<option value="2_3">2-3 liters</option>
+									<option value="more_3">3+ liters</option>
+								</select>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label
+								class="block text-sm font-semibold text-gray-700 mb-3"
+								>Food Allergies (if any)</label
+							>
+							<div class="grid md:grid-cols-3 gap-3">
+								<label class="checkbox-card-sm">
+									<input
+										type="checkbox"
+										name="allergies[]"
+										value="dairy"
+										class="hidden"
+									/>
+									<span>🥛 Dairy</span>
+								</label>
+								<label class="checkbox-card-sm">
+									<input
+										type="checkbox"
+										name="allergies[]"
+										value="gluten"
+										class="hidden"
+									/>
+									<span>🌾 Gluten</span>
+								</label>
+								<label class="checkbox-card-sm">
+									<input
+										type="checkbox"
+										name="allergies[]"
+										value="nuts"
+										class="hidden"
+									/>
+									<span>🥜 Nuts</span>
+								</label>
+								<label class="checkbox-card-sm">
+									<input
+										type="checkbox"
+										name="allergies[]"
+										value="soy"
+										class="hidden"
+									/>
+									<span>🫘 Soy</span>
+								</label>
+								<label class="checkbox-card-sm">
+									<input
+										type="checkbox"
+										name="allergies[]"
+										value="eggs"
+										class="hidden"
+									/>
+									<span>🥚 Eggs</span>
+								</label>
+								<label class="checkbox-card-sm">
+									<input
+										type="checkbox"
+										name="allergies[]"
+										value="shellfish"
+										class="hidden"
+									/>
+									<span>🦐 Shellfish</span>
+								</label>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Section 5: Health & Lifestyle -->
+				<div class="form-section">
+					<div class="mb-6">
+						<div class="flex items-center gap-3 mb-4">
+							<span class="text-3xl">💚</span>
+							<h2 class="text-2xl font-bold text-gray-800">
+								Health & lifestyle
+							</h2>
+						</div>
+						<p class="text-gray-600">
+							Help us understand your overall wellness
+						</p>
+					</div>
+
+					<div class="space-y-6">
+						<div class="form-group">
+							<label
+								class="block text-sm font-semibold text-gray-700 mb-2"
+								>Average sleep per night</label
+							>
+							<select
+								name="sleep_hours"
+								required
+								class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition outline-none"
+							>
+								<option value="">Select</option>
+								<option value="less_5">
+									Less than 5 hours
+								</option>
+								<option value="5_6">5-6 hours</option>
+								<option value="6_7">6-7 hours</option>
+								<option value="7_8">7-8 hours ✨</option>
+								<option value="more_8">
+									More than 8 hours
+								</option>
+							</select>
+						</div>
+
+						<div class="form-group">
+							<label
+								class="block text-sm font-semibold text-gray-700 mb-2"
+								>Stress level</label
+							>
+							<div class="grid grid-cols-3 gap-3">
+								<label class="radio-card">
+									<input
+										type="radio"
+										name="stress_level"
+										value="low"
+										required
+										class="hidden"
+									/>
+									<div class="card-content">
+										<span class="text-3xl mb-2">😌</span>
+										<span class="font-semibold">Low</span>
+									</div>
+								</label>
+								<label class="radio-card">
+									<input
+										type="radio"
+										name="stress_level"
+										value="moderate"
+										class="hidden"
+									/>
+									<div class="card-content">
+										<span class="text-3xl mb-2">😐</span>
+										<span class="font-semibold"
+											>Moderate</span
+										>
+									</div>
+								</label>
+								<label class="radio-card">
+									<input
+										type="radio"
+										name="stress_level"
+										value="high"
+										class="hidden"
+									/>
+									<div class="card-content">
+										<span class="text-3xl mb-2">😰</span>
+										<span class="font-semibold">High</span>
+									</div>
+								</label>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label
+								class="block text-sm font-semibold text-gray-700 mb-3"
+								>Health conditions (if any)</label
+							>
+							<div class="grid md:grid-cols-3 gap-3">
+								<label class="checkbox-card-sm">
+									<input
+										type="checkbox"
+										name="conditions[]"
+										value="diabetes"
+										class="hidden"
+									/>
+									<span>🩸 Diabetes</span>
+								</label>
+								<label class="checkbox-card-sm">
+									<input
+										type="checkbox"
+										name="conditions[]"
+										value="high_bp"
+										class="hidden"
+									/>
+									<span>❤️ High BP</span>
+								</label>
+								<label class="checkbox-card-sm">
+									<input
+										type="checkbox"
+										name="conditions[]"
+										value="thyroid"
+										class="hidden"
+									/>
+									<span>🦋 Thyroid</span>
+								</label>
+								<label class="checkbox-card-sm">
+									<input
+										type="checkbox"
+										name="conditions[]"
+										value="asthma"
+										class="hidden"
+									/>
+									<span>🫁 Asthma</span>
+								</label>
+								<label class="checkbox-card-sm">
+									<input
+										type="checkbox"
+										name="conditions[]"
+										value="pcod"
+										class="hidden"
+									/>
+									<span>🩺 PCOD/PCOS</span>
+								</label>
+								<label class="checkbox-card-sm">
+									<input
+										type="checkbox"
+										name="conditions[]"
+										value="joint_issues"
+										class="hidden"
+									/>
+									<span>🦴 Joint Issues</span>
+								</label>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label
+								class="block text-sm font-semibold text-gray-700 mb-2"
+								>Additional notes (optional)</label
+							>
+							<textarea
+								name="additional_notes"
+								rows="4"
+								class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition outline-none"
+								placeholder="Any specific preferences, injuries, or goals you'd like to share..."
+							></textarea>
+						</div>
+					</div>
+				</div>
+
+				<!-- Navigation Buttons -->
+				<div class="flex items-center justify-between pt-8 border-t">
+					<button
+						type="button"
+						id="prevBtn"
+						class="px-6 py-3 rounded-xl bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition hidden"
+					>
+						← Previous
+					</button>
+					<button
+						type="button"
+						id="nextBtn"
+						class="ml-auto px-8 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold hover:shadow-lg transition"
+					>
+						Next →
+					</button>
+					<button
+						type="submit"
+						id="submitBtn"
+						class="ml-auto px-8 py-3 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold hover:shadow-lg transition hidden"
+					>
+						Create My Plan 🚀
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<style>
+	.form-section {
+		display: none;
+	}
+	.form-section.active {
+		display: block;
+		animation: fadeIn 0.3s ease-in;
+	}
+	@keyframes fadeIn {
+		from {
+			opacity: 0;
+			transform: translateY(10px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	.radio-card,
+	.radio-card-lg {
+		cursor: pointer;
+		transition: all 0.2s;
+	}
+	.radio-card .card-content,
+	.radio-card-lg .card-content {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		padding: 1rem;
+		border: 2px solid #e5e7eb;
+		border-radius: 1rem;
+		transition: all 0.2s;
+	}
+	.radio-card:hover .card-content,
+	.radio-card-lg:hover .card-content {
+		border-color: #818cf8;
+		transform: translateY(-2px);
+		box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+	}
+	.radio-card input:checked + .card-content,
+	.radio-card-lg input:checked + .card-content {
+		border-color: #6366f1;
+		background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+		box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+	}
+
+	.checkbox-card,
+	.checkbox-card-sm {
+		cursor: pointer;
+		transition: all 0.2s;
+	}
+	.checkbox-card .card-content {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		padding: 0.75rem;
+		border: 2px solid #e5e7eb;
+		border-radius: 0.75rem;
+		transition: all 0.2s;
+	}
+	.checkbox-card-sm {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0.75rem;
+		border: 2px solid #e5e7eb;
+		border-radius: 0.75rem;
+		font-size: 0.875rem;
+		transition: all 0.2s;
+	}
+	.checkbox-card:hover .card-content,
+	.checkbox-card-sm:hover {
+		border-color: #818cf8;
+		transform: translateY(-2px);
+	}
+	.checkbox-card input:checked + .card-content,
+	.checkbox-card-sm:has(input:checked) {
+		border-color: #6366f1;
+		background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+	}
+
+	.form-group {
+		animation: slideIn 0.3s ease-out;
+	}
+	@keyframes slideIn {
+		from {
+			opacity: 0;
+			transform: translateX(-10px);
+		}
+		to {
+			opacity: 1;
+			transform: translateX(0);
+		}
+	}
+</style>
+
+<script>
+	let currentSection = 0;
+	const sections = document.querySelectorAll(".form-section");
+	const prevBtn = document.getElementById("prevBtn");
+	const nextBtn = document.getElementById("nextBtn");
+	const submitBtn = document.getElementById("submitBtn");
+	const progressBar = document.getElementById("progressBar");
+	const progressText = document.getElementById("progressText");
+
+	function updateProgress() {
+		const progress = ((currentSection + 1) / sections.length) * 100;
+		progressBar.style.width = progress + "%";
+		progressText.textContent = Math.round(progress) + "% Complete";
+	}
+
+	function showSection(n) {
+		sections.forEach((section) => section.classList.remove("active"));
+		sections[n].classList.add("active");
+
+		prevBtn.classList.toggle("hidden", n === 0);
+		nextBtn.classList.toggle("hidden", n === sections.length - 1);
+		submitBtn.classList.toggle("hidden", n !== sections.length - 1);
+
+		updateProgress();
+		window.scrollTo({ top: 0, behavior: "smooth" });
+	}
+
+	function validateSection() {
+		const currentInputs = sections[currentSection].querySelectorAll(
+			"input[required], select[required]",
+		);
+		let isValid = true;
+
+		currentInputs.forEach((input) => {
+			if (input.type === "radio") {
+				const radioGroup = sections[currentSection].querySelectorAll(
+					`input[name="${input.name}"]`,
+				);
+				const isChecked = Array.from(radioGroup).some(
+					(radio) => radio.checked,
+				);
+				if (!isChecked) isValid = false;
+			} else if (!input.value) {
+				isValid = false;
+			}
+		});
+
+		return isValid;
+	}
+
+	nextBtn.addEventListener("click", () => {
+		if (validateSection()) {
+			currentSection++;
+			showSection(currentSection);
+		} else {
+			alert("Please fill in all required fields before continuing.");
+		}
+	});
+
+	prevBtn.addEventListener("click", () => {
+		currentSection--;
+		showSection(currentSection);
+	});
+
+	// BMI Calculator
+	const heightInput = document.getElementById("height");
+	const weightInput = document.getElementById("weight");
+	const bmiValue = document.getElementById("bmiValue");
+	const bmiCategory = document.getElementById("bmiCategory");
+
+	function calculateBMI() {
+		const h = heightInput.value / 100;
+		const w = weightInput.value;
+		if (h && w) {
+			const bmi = (w / (h * h)).toFixed(1);
+			bmiValue.textContent = bmi;
+
+			if (bmi < 18.5) {
+				bmiCategory.textContent = "Underweight";
+				bmiValue.style.color = "#3b82f6";
+			} else if (bmi < 25) {
+				bmiCategory.textContent = "Normal weight";
+				bmiValue.style.color = "#10b981";
+			} else if (bmi < 30) {
+				bmiCategory.textContent = "Overweight";
+				bmiValue.style.color = "#f59e0b";
+			} else {
+				bmiCategory.textContent = "Obese";
+				bmiValue.style.color = "#ef4444";
+			}
+		}
+	}
+
+	heightInput.addEventListener("input", calculateBMI);
+	weightInput.addEventListener("input", calculateBMI);
+
+	// Initialize
+	showSection(0);
+</script>
+
+{% endblock %}

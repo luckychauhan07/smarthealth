@@ -1,0 +1,143 @@
+{% load static %}
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>SmartHealth - Your Personal Fitness Companion</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+			rel="stylesheet"
+		/>
+		<script src="https://cdn.tailwindcss.com"></script>
+		<link rel="stylesheet" href="{% static 'css/main.css' %}" />
+	</head>
+	<body
+		class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 text-slate-900"
+	>
+		<nav class="sticky top-0 z-50 bg-white shadow-md">
+			<div
+				class="mx-auto flex max-w-6xl items-center justify-between px-5 py-4"
+			>
+				<!-- Logo -->
+				<div
+					class="flex items-center gap-2 text-2xl font-extrabold text-slate-900"
+				>
+					💪 SmartHealth
+				</div>
+
+				<!-- Links -->
+				<div
+					class="flex items-center gap-6 text-sm font-medium text-slate-600"
+				>
+					<a class="transition hover:text-indigo-600" href="#features"
+						>Features</a
+					>
+					<a
+						class="transition hover:text-indigo-600"
+						href="#testimonials"
+						>Reviews</a
+					>
+					<a class="transition hover:text-indigo-600" href="#pricing"
+						>Pricing</a
+					>
+
+					{% if user.is_authenticated %}
+					<span class="text-slate-800 font-semibold">
+						Hi, {{ user.username }}
+					</span>
+
+					<a
+						href="{% url 'logout' %}"
+						class="inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-red-500 to-red-600 px-4 py-2 text-white font-semibold shadow-lg transition duration-300 hover:shadow-xl hover:from-red-600 hover:to-red-700 transform hover:scale-105"
+					>
+						Logout
+					</a>
+
+					{% else %}
+					<a
+						href="{% url 'login' %}"
+						class="inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-2 text-white font-semibold shadow-lg transition duration-300 hover:shadow-xl hover:from-indigo-700 hover:to-purple-700 transform hover:scale-105"
+						>Login</a
+					>
+					{% endif %}
+				</div>
+			</div>
+		</nav>
+
+		{% block content %}{% endblock %}
+		<footer class="bg-slate-900 px-5 py-12 text-white">
+			<div class="mx-auto max-w-6xl">
+				<div
+					class="grid gap-8 border-b border-white/10 pb-8 sm:grid-cols-2 lg:grid-cols-4"
+				>
+					<div>
+						<h4 class="text-lg font-semibold">SmartHealth</h4>
+						<p class="mt-2 text-sm text-white/70">
+							Your personal fitness companion
+						</p>
+					</div>
+					<div>
+						<h4 class="text-lg font-semibold">Product</h4>
+						<ul class="mt-3 space-y-2 text-sm text-white/70">
+							<li>
+								<a class="hover:text-white" href="#features"
+									>Features</a
+								>
+							</li>
+							<li>
+								<a class="hover:text-white" href="#pricing"
+									>Pricing</a
+								>
+							</li>
+							<li>
+								<a class="hover:text-white" href="#">Blog</a>
+							</li>
+						</ul>
+					</div>
+					<div>
+						<h4 class="text-lg font-semibold">Company</h4>
+						<ul class="mt-3 space-y-2 text-sm text-white/70">
+							<li>
+								<a class="hover:text-white" href="#"
+									>About Us</a
+								>
+							</li>
+							<li>
+								<a class="hover:text-white" href="#">Contact</a>
+							</li>
+							<li>
+								<a class="hover:text-white" href="#">Privacy</a>
+							</li>
+						</ul>
+					</div>
+					<div>
+						<h4 class="text-lg font-semibold">Follow Us</h4>
+						<ul class="mt-3 space-y-2 text-sm text-white/70">
+							<li>
+								<a class="hover:text-white" href="#">Twitter</a>
+							</li>
+							<li>
+								<a class="hover:text-white" href="#"
+									>Instagram</a
+								>
+							</li>
+							<li>
+								<a class="hover:text-white" href="#"
+									>Facebook</a
+								>
+							</li>
+						</ul>
+					</div>
+				</div>
+				<p class="pt-6 text-center text-xs text-white/60">
+					© 2026 SmartHealth. All rights reserved.
+				</p>
+			</div>
+		</footer>
+
+		<script src="{% static 'js/app.js' %}"></script>
+	</body>
+</html>

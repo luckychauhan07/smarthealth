@@ -1,0 +1,181 @@
+{% load static %}
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>SmartHealth - Register</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+			rel="stylesheet"
+		/>
+		<script src="https://cdn.tailwindcss.com"></script>
+		<link rel="stylesheet" href="{% static 'css/main.css' %}" />
+	</head>
+	<body
+		class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 text-slate-900"
+	>
+		<!-- Minimal Navbar -->
+		<nav class="sticky top-0 z-50 bg-white shadow-md">
+			<div
+				class="mx-auto flex max-w-6xl items-center justify-between px-5 py-4"
+			>
+				<div class="text-2xl font-extrabold text-slate-900">
+					💪 SmartHealth
+				</div>
+				<div class="flex items-center gap-10">
+					<a
+						href="/"
+						class="text-sm font-medium text-slate-600 hover:text-indigo-600 transition"
+						>Home</a
+					>
+					<a
+						href="/accounts/login/"
+						class="inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-2 text-white font-semibold shadow-lg transition duration-300 hover:shadow-xl hover:from-indigo-700 hover:to-purple-700 transform hover:scale-105"
+					>
+						Login
+					</a>
+				</div>
+			</div>
+		</nav>
+
+		<!-- Register Card -->
+		<div
+			class="flex items-center justify-center px-4 sm:px-6 min-h-[calc(100vh-72px)]"
+		>
+			<div
+				class="w-full max-w-2xl rounded-2xl bg-white/90 backdrop-blur-lg shadow-xl p-10"
+			>
+				<!-- Title -->
+				<div class="text-center mb-8">
+					<h1 class="text-3xl font-extrabold text-slate-900">
+						Create Account ✨
+					</h1>
+					<p class="text-sm text-slate-500 mt-2">
+						Join thousands achieving their fitness goals
+					</p>
+				</div>
+
+				<!-- Messages -->
+				{% if messages %} {% for message in messages %}
+				<div
+					class="mb-6 flex items-start gap-3 p-4 rounded-lg bg-red-50 border border-red-200"
+				>
+					<span class="text-red-600 text-lg flex-shrink-0 mt-0.5"
+						>⚠</span
+					>
+					<p class="text-sm text-red-700">{{ message }}</p>
+				</div>
+				{% endfor %} {% endif %}
+
+				<!-- Form -->
+				<form class="space-y-5" method="post">
+					{% csrf_token %}
+
+					<div>
+						<label
+							for="fullname"
+							class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2"
+							>Full Name</label
+						>
+						<input
+							id="fullname"
+							required
+							type="text"
+							placeholder="John Doe"
+							name="username"
+							class="w-full px-4 py-3 text-sm border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 outline-none transition duration-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+						/>
+					</div>
+
+					<div>
+						<label
+							for="email"
+							class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2"
+							>Email Address</label
+						>
+						<input
+							id="email"
+							required
+							type="email"
+							placeholder="you@example.com"
+							name="email"
+							class="w-full px-4 py-3 text-sm border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 outline-none transition duration-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+						/>
+					</div>
+
+					<div>
+						<label
+							for="password"
+							class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2"
+							>Password</label
+						>
+						<input
+							id="password"
+							required
+							type="password"
+							placeholder="Enter your password"
+							name="password"
+							class="w-full px-4 py-3 text-sm border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 outline-none transition duration-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+						/>
+					</div>
+
+					<div>
+						<label
+							for="confirm_password"
+							class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2"
+							>Confirm Password</label
+						>
+						<input
+							id="confirm_password"
+							required
+							type="password"
+							placeholder="Re-enter your password"
+							name="confirm_password"
+							class="w-full px-4 py-3 text-sm border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 outline-none transition duration-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+						/>
+					</div>
+
+					<div class="flex items-center gap-2 text-sm">
+						<input
+							type="checkbox"
+							required
+							class="rounded border-slate-300"
+						/>
+						<span class="text-slate-600"
+							>I agree to the
+							<a
+								href="#"
+								class="text-indigo-600 hover:text-indigo-700"
+								>Terms & Privacy</a
+							></span
+						>
+					</div>
+
+					<button
+						type="submit"
+						class="w-full mt-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-transform duration-200"
+					>
+						Register
+					</button>
+				</form>
+
+				<!-- Login Link -->
+				<div class="mt-8 text-center">
+					<p class="text-sm text-slate-600">
+						Already have an account?
+						<a
+							href="/accounts/login"
+							class="text-indigo-600 font-medium hover:text-indigo-700 transition"
+							>Sign in here</a
+						>
+					</p>
+				</div>
+			</div>
+		</div>
+
+		<script src="{% static 'js/app.js' %}"></script>
+	</body>
+</html>
