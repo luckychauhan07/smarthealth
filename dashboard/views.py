@@ -50,7 +50,7 @@ def dashboard_workout(request):
     print(plan)
     # Dashboard should never trigger plan generation; only display existing
     # plans or guide users to Action Center.
-
+    print(profile.workout_duration_minutes)
     return render(request, "dashboard_workout.html", {
         "profile": profile,
         "plan": plan,

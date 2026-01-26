@@ -1,3 +1,5 @@
+from urllib import response
+from xml.parsers.expat import model
 from django.shortcuts import redirect, render
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -13,9 +15,13 @@ def action_center(request):
     plan_status, _ = UserPlanStatus.objects.get_or_create(
         user=request.user
     )
-
+    plan, created = GeneratedPlan.objects.get_or_create(user=request.user)
+    print(plan_status,"lucky",plan,created)
+    if created:
+        plan_generated=True
     return render(request, 'action_center.html', {
-        'plan_status': plan_status
+        'plan_status': plan_status,
+        "plan_generated": plan_generated if created else "yet not generated" ,
     })
 
 
@@ -126,49 +132,80 @@ from django.conf import settings
 
 @require_GET
 def gemini_api_test(request):
-    """
-    Super simple Gemini API test endpoint
-    """
+    import json, traceback
+    from django.http import JsonResponse
+    from django.conf import settings
+    import google.generativeai as genai
 
     try:
-        # Configure Gemini
-        genai.configure(api_key="AIzaSyDgUgidYWcKW90Wd6S76C-T789kFepoPeE")
+        genai.configure(api_key=settings.GEMINI_API_KEY)
 
         model = genai.GenerativeModel(
-        model_name="models/gemini-2.5-flash",
-        generation_config={
-            "response_mime_type": "application/json",
-            "temperature": 0.7,
-            "max_output_tokens": 512,
-        },
+            model_name="models/gemini-2.5-flash",
+            generation_config={
+                "response_mime_type": "application/json",
+                "temperature": 0.6,
+                "max_output_tokens": 1024,  # 🔥 IMPORTANT
+            },
         )
 
-
-        # VERY simple prompt
-        prompt = """
-        Return STRICT JSON only.
-
-        {
-          "status": "ok",
-          "message": "Gemini API is working",
-          "sample_plan": {
-            "day": "Monday",
-            "workout": "Full body workout"
-          }
-        }
-        """
+        prompt = (
+            "Generate a 7-day workout plan in STRICT JSON.\n"
+            "Return ONLY valid JSON. No markdown. No explanation.\n\n"
+            "{"
+            '"workout_plan":[{'
+            '"day":"Day 1",'
+            '"focus":"string",'
+            '"calories":number,'
+            '"duration_min":number,'
+            '"exercises":[{'
+            '"name":"string",'
+            '"sets":number|null,'
+            '"reps":number|null,'
+            '"duration_sec":number|null,'
+            '"rest_sec":number'
+            '}]}],'
+            '"tips":["string"]'
+            "}\n\n"
+            "Rules:\n"
+            "- Include 1 rest day\n"
+            "- Strength: sets/reps\n"
+            "- Cardio: duration_sec\n"
+            "- Use null if not applicable\n\n"
+            "User:\n"
+            "Goal: muscle gain\n"
+            "Weight: 50 kg\n"
+            "Height: 156 cm\n"
+            "Activity: mid level\n"
+            "Experience: beginner\n"
+            "Workout days/week: 6\n"
+            "Duration/session: 45 min\n"
+            "Health conditions: None"
+        )
 
         response = model.generate_content(prompt)
 
-        # Parse Gemini JSON
-        data = json.loads(response.text)
-        print("Gemini response data:", data)
+        raw = response.text.strip()
+        print("RAW GEMINI RESPONSE:\n", raw)
+
+        # 🔐 Extract JSON safely
+        start = raw.find("{")
+        end = raw.rfind("}")
+
+        if start == -1 or end == -1:
+            raise ValueError("Gemini response does not contain JSON")
+
+        json_text = raw[start:end + 1]
+
+        data = json.loads(json_text)
+
         return JsonResponse({
             "success": True,
             "gemini_response": data
         })
 
     except Exception as e:
+        traceback.print_exc()
         return JsonResponse({
             "success": False,
             "error": str(e)
