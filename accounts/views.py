@@ -11,6 +11,12 @@ from health.models import HealthProfile
 # Create your views here.
 
 def home(request):
+    if request.user.is_authenticated:
+        profile = HealthProfile.objects.filter(user=request.user).first()
+        if profile and profile.onboarding_completed:
+            return redirect('dashboard')
+        else:
+            return redirect('action_center')
     return render(request, 'index.html')
 
 
