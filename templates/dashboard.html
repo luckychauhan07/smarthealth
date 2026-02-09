@@ -71,6 +71,15 @@
 			{% endif %}
 
 			{% if plan %}
+			<script>
+				// Get today's day index (0=Monday, 6=Sunday)
+				const todayIndex = (new Date().getDay() + 6) % 7;
+				
+				// Parse JSON data from Django
+				const dietPlan = {{ diet_plan_json|safe }};
+				const workoutPlan = {{ workout_plan_json|safe }};
+			</script>
+
 			<!-- USER GOAL CARD -->
 			<section class="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 text-white rounded-3xl shadow-2xl p-8 transform hover:shadow-3xl transition">
 				<div class="flex items-start justify-between">
@@ -95,35 +104,113 @@
 					<!-- TODAY DIET CARD -->
 					<div class="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition transform hover:scale-105">
 						<div class="bg-gradient-to-r from-green-400 to-emerald-500 p-6 text-white">
-							<div class="flex items-center gap-3">
-								<span class="text-4xl">🥗</span>
-								<h3 class="text-2xl font-bold">Today's Meals</h3>
+							<div class="flex items-center justify-between">
+								<div class="flex items-center gap-3">
+									<span class="text-4xl">🥗</span>
+									<h3 class="text-2xl font-bold">Today's Meals</h3>
+								</div>
+								<div id="today-calories" class="text-white/90 text-sm font-semibold">🔥 ...</div>
 							</div>
 						</div>
 						<div class="p-6">
-							{% with plan.diet_plan.0 as today_diet %}
-							{% if today_diet %}
-							<p class="text-sm font-semibold text-slate-500 mb-4">{{ today_diet.day }}</p>
-							<ul class="space-y-3">
-								{% for meal in today_diet.meals %}
-								<li class="flex gap-3 items-start text-slate-700">
-									<span class="text-green-500 font-bold text-xl">✓</span>
-									<span class="leading-relaxed">{{ meal }}</span>
-								</li>
-								{% endfor %}
-							</ul>
-							{% else %}
-							<p class="text-slate-500 italic">No meals planned for today</p>
-							<form method="POST" action="{% url 'generate_diet' %}" class="inline-block">
-								{% csrf_token %}
-								<button
-									class="px-10 py-4 text-center bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-bold text-lg shadow-lg hover:shadow-2xl hover:from-green-600 hover:to-emerald-700 transition transform hover:scale-105"
-								>
-									Generate Diet Plan
-								</button>
-							</form>
-							{% endif %}
-							{% endwith %}
+							<script>
+								const todayDiet = dietPlan[todayIndex];
+								
+								if (todayDiet) {
+									document.write(`
+										<div class="flex items-center justify-between mb-3">
+											<p class="text-sm font-semibold text-slate-500">${todayDiet.day}</p>
+											<span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-semibold">${todayDiet.meals.length} meals</span>
+										</div>
+										<ul id="meals-list" class="space-y-3">
+									`);
+									
+									todayDiet.meals.forEach((meal, idx) => {
+										const mealType = meal.includes('Breakfast') ? '🌅 Breakfast' :
+														 meal.includes('Lunch') ? '☀️ Lunch' :
+														 meal.includes('Dinner') ? '🌙 Dinner' :
+														 meal.includes('Snack') ? '🍎 Snack' : '🍽️ Meal';
+										
+										document.write(`
+											<li class="meal-item border-l-3 border-emerald-200 pl-3 ${idx >= 3 ? 'hidden' : ''}">
+												<div class="flex items-start justify-between gap-2 mb-1">
+													<span class="text-xs font-bold text-emerald-600 uppercase">${mealType}</span>
+													<span class="meal-cal px-2 py-0.5 bg-orange-100 text-orange-700 rounded text-xs font-bold" data-meal="${meal}">0</span>
+												</div>
+												<p class="text-slate-700 text-sm leading-relaxed">${meal.substring(10)}</p>
+											</li>
+										`);
+									});
+									
+									document.write('</ul>');
+									
+									if (todayDiet.meals.length > 3) {
+										document.write(`
+											<button onclick="toggleMeals()" id="toggle-meals-btn" class="mt-3 text-emerald-600 hover:text-emerald-700 text-sm font-semibold hover:underline cursor-pointer">
+												+ ${todayDiet.meals.length - 3} more meals
+											</button>
+										`);
+									}
+								} else {
+									document.write(`
+										<p class="text-slate-500 italic">No meals planned for today</p>
+										<form method="POST" action="{% url 'generate_diet' %}" class="inline-block">
+											{% csrf_token %}
+											<button class="px-10 py-4 text-center bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-bold text-lg shadow-lg hover:shadow-2xl hover:from-green-600 hover:to-emerald-700 transition transform hover:scale-105">
+												Generate Diet Plan
+											</button>
+										</form>
+									`);
+								}
+							</script>
+							<script>
+								document.addEventListener('DOMContentLoaded', function() {
+									let total = 0;
+									document.querySelectorAll('.meal-cal').forEach(function(badge) {
+										const mealText = badge.getAttribute('data-meal');
+										const matches = mealText.match(/(\d+)\s*calor/gi);
+										if (matches) {
+											const cal = matches.reduce((sum, m) => sum + parseInt(m.match(/\d+/)[0]), 0);
+											badge.textContent = cal + ' cal';
+											total += cal;
+										} else {
+											badge.style.display = 'none';
+										}
+									});
+									const totalDiv = document.getElementById('today-calories');
+									if (totalDiv && total > 0) totalDiv.textContent = '🔥 ' + total + ' cal';
+								});
+
+								function toggleMeals() {
+									const hiddenMeals = document.querySelectorAll('.meal-item.hidden');
+									const btn = document.getElementById('toggle-meals-btn');
+									if (hiddenMeals.length > 0) {
+										hiddenMeals.forEach(meal => meal.classList.remove('hidden'));
+										btn.textContent = '− Show less';
+									} else {
+										const allMeals = document.querySelectorAll('.meal-item');
+										allMeals.forEach((meal, index) => {
+											if (index >= 3) meal.classList.add('hidden');
+										});
+										btn.textContent = '+ ' + (allMeals.length - 3) + ' more meals';
+									}
+								}
+
+								function toggleExercises() {
+									const hiddenExercises = document.querySelectorAll('.exercise-item.hidden');
+									const btn = document.getElementById('toggle-exercises-btn');
+									if (hiddenExercises.length > 0) {
+										hiddenExercises.forEach(ex => ex.classList.remove('hidden'));
+										btn.textContent = '− Show less';
+									} else {
+										const allExercises = document.querySelectorAll('.exercise-item');
+										allExercises.forEach((ex, index) => {
+											if (index >= 3) ex.classList.add('hidden');
+										});
+										btn.textContent = '+ ' + (allExercises.length - 3) + ' more exercises';
+									}
+								}
+							</script>
 						</div>
 					</div>
 
@@ -140,52 +227,67 @@
 							</div>
 						</div>
 						<div class="p-6">
-							{% with plan.workout_plan.0 as today_workout %}
-							{% if today_workout %}
-							<div class="mb-4">
-								<p class="text-sm font-semibold text-slate-500 mb-2">{{ today_workout.day }}</p>
-								<p class="text-lg font-bold text-slate-900 mb-3">{{ today_workout.focus }}</p>
-								<div class="flex gap-3 mb-4">
-									<span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold">
-										⏱️ {{ today_workout.duration_min }} min
-									</span>
-									<span class="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-sm font-semibold">
-										🔥 {{ today_workout.calories }} cal
-									</span>
-								</div>
-							</div>
-							{% if today_workout.exercises %}
-							<div class="border-t border-slate-200 pt-4">
-								<p class="text-sm font-semibold text-slate-600 mb-3">Exercises ({{ today_workout.exercises|length }})</p>
-								<ul class="space-y-2">
-									{% for exercise in today_workout.exercises|slice:":3" %}
-									<li class="flex gap-2 items-start text-slate-700 text-sm">
-										<span class="text-blue-500 font-bold">→</span>
-										<span>{{ exercise.name }}</span>
-									</li>
-									{% endfor %}
-									{% if today_workout.exercises|length > 3 %}
-									<li class="text-slate-500 text-sm italic">
-										+{{ today_workout.exercises|length|add:"-3" }} more exercises
-									</li>
-									{% endif %}
-								</ul>
-							</div>
-							{% else %}
-							<p class="text-slate-500 italic text-center py-4">Rest day - No exercises scheduled</p>
-							{% endif %}
-							{% else %}
-							<p class="text-slate-500 italic">No workout planned for today</p>
-							<form method="POST" action="{% url 'generate_workout' %}" class="inline-block">
-								{% csrf_token %}
-								<button
-									class="px-10 py-4 text-center bg-gradient-to-r from-blue-500 to-cyan-600 text-white rounded-xl font-bold text-lg shadow-lg hover:shadow-2xl hover:from-blue-600 hover:to-cyan-700 transition transform hover:scale-105"
-								>
-									Generate Workout Plan
-								</button>
-							</form>
-							{% endif %}
-							{% endwith %}
+							<script>
+								const todayWorkout = workoutPlan[todayIndex];
+								
+								if (todayWorkout) {
+									document.write(`
+										<div class="mb-4">
+											<p class="text-sm font-semibold text-slate-500 mb-2">${todayWorkout.day}</p>
+											<p class="text-lg font-bold text-slate-900 mb-3">${todayWorkout.focus}</p>
+											<div class="flex gap-3 mb-4">
+												<span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold">
+													⏱️ ${todayWorkout.duration_min} min
+												</span>
+												<span class="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-sm font-semibold">
+													🔥 ${todayWorkout.calories} cal
+												</span>
+											</div>
+										</div>
+									`);
+									
+									if (todayWorkout.exercises && todayWorkout.exercises.length > 0) {
+										document.write(`
+											<div class="border-t border-slate-200 pt-4">
+												<p class="text-sm font-semibold text-slate-600 mb-3">Exercises (${todayWorkout.exercises.length})</p>
+												<ul id="exercises-list" class="space-y-2">
+										`);
+										
+										todayWorkout.exercises.forEach((exercise, idx) => {
+											document.write(`
+												<li class="exercise-item flex gap-2 items-start text-slate-700 text-sm ${idx >= 3 ? 'hidden' : ''}">
+													<span class="text-blue-500 font-bold">→</span>
+													<span>${exercise.name}</span>
+												</li>
+											`);
+										});
+										
+										document.write('</ul>');
+										
+										if (todayWorkout.exercises.length > 3) {
+											document.write(`
+												<button onclick="toggleExercises()" id="toggle-exercises-btn" class="mt-3 text-blue-600 hover:text-blue-700 text-sm font-semibold hover:underline cursor-pointer">
+													+ ${todayWorkout.exercises.length - 3} more exercises
+												</button>
+											`);
+										}
+										
+										document.write('</div>');
+									} else {
+										document.write('<p class="text-slate-500 italic text-center py-4">Rest day - No exercises scheduled</p>');
+									}
+								} else {
+									document.write(`
+										<p class="text-slate-500 italic">No workout planned for today</p>
+										<form method="POST" action="{% url 'generate_workout' %}" class="inline-block">
+											{% csrf_token %}
+											<button class="px-10 py-4 text-center bg-gradient-to-r from-blue-500 to-cyan-600 text-white rounded-xl font-bold text-lg shadow-lg hover:shadow-2xl hover:from-blue-600 hover:to-cyan-700 transition transform hover:scale-105">
+												Generate Workout Plan
+											</button>
+										</form>
+									`);
+								}
+							</script>
 						</div>
 					</div>
 				</div>

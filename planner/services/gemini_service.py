@@ -1,4 +1,3 @@
-import json
 import logging
 import google.generativeai as genai
 from django.conf import settings
@@ -10,26 +9,27 @@ from django.shortcuts import redirect
 logger = logging.getLogger(__name__)
 
 # -------------------------------------------------------------------
-# 1. Pydantic Schemas (Internal Validation)
+# 1. Pydantic Schemas (Enforcing Strict Structure)
 # -------------------------------------------------------------------
 
 class Exercise(BaseModel):
-    name: str
+    # Avoid defaults in schema; Gemini rejects "default" fields. Optional values are nullable but required in shape.
+    name: str = Field(description="Name of the exercise")
     sets: Optional[int]
     reps: Optional[int]
     duration_sec: Optional[int]
-    rest_sec: int
+    rest_sec: int = Field(description="Rest time between sets")
 
 class WorkoutDay(BaseModel):
     day: str
-    focus: str
-    calories: int
+    focus: str = Field(description="Main muscle group or workout type (e.g., Push Day, Cardio)")
+    calories: int = Field(description="Estimated calories burned")
     duration_min: int
     exercises: List[Exercise]
 
 class DietDay(BaseModel):
     day: str
-    meals: List[str]
+    meals: List[str] = Field(description="List of meals with calorie details included in the string")
 
 class WorkoutPlanSchema(BaseModel):
     workout_plan: List[WorkoutDay]
@@ -40,82 +40,101 @@ class DietPlanSchema(BaseModel):
     tips: List[str]
 
 # -------------------------------------------------------------------
-# 2. Configuration
+# 2. Configuration & Model Setup
 # -------------------------------------------------------------------
+
 genai.configure(api_key=settings.GEMINI_API_KEY)
 
-# Using 2.5-Flash for production stability with JSON schemas
+# Note: Gemini 1.5 Flash is currently the most stable for Constrained Output (JSON)
 MODEL_NAME = "gemini-2.5-flash" 
 
+def get_configured_model(schema):
+    return genai.GenerativeModel(
+        model_name=MODEL_NAME,
+        generation_config={
+            "response_mime_type": "application/json",
+            "response_schema": schema,
+            "temperature": 0.7,
+        }
+    )
+
 # -------------------------------------------------------------------
-# 3. Core Functions (Maintaining your exact signatures)
+# 3. Core Generation Functions
 # -------------------------------------------------------------------
 
 def generate_diet_plan(profile):
     """
-    Returns dict with keys: 'diet_plan', 'tips'
+    Generates an Indian diet plan based on full user profile.
+    Returns: Dict containing 'diet_plan' and 'tips'
     """
     prompt = (
-        f"Generate a 7-day diet plan. Goal: {profile.goal}, "
-        f"Weight: {profile.weight_kg}kg, Diet: {profile.diet_type}, "
-        f"Meals/day: {profile.meals_per_day}. generate meals in context of indians diet add calorie details for each meal."
+        f"Generate a 7-day Indian diet plan for a {profile.age}yo {profile.gender}. "
+        f"Goal: {profile.goal}, Current Weight: {profile.weight_kg}kg, Target: {profile.target_weight_kg}kg. "
+        f"Diet Type: {profile.diet_type}, Meals per Day: {profile.meals_per_day}. "
+        f"Allergies: {', '.join(profile.food_allergies or ['None'])}, "
+        f"Health Conditions: {', '.join(profile.health_conditions or ['None'])}. "
+        f"Water Intake: {profile.water_intake}L/day, Avg Sleep: {profile.sleep_hours}hrs. "
+        "Strictly ensure meals are Indian-style and include approximate calories for each meal."
     )
-    
-    try:
-        model = genai.GenerativeModel(
-            model_name=MODEL_NAME,
-            generation_config={
-                "response_mime_type": "application/json",
-                "response_schema": DietPlanSchema,
-                "temperature": 0.7,
-            }
-        )
-        model_response = model.generate_content(prompt)
-        # Validates and converts to dict automatically
-        return DietPlanSchema.model_validate_json(model_response.text).model_dump()
 
-    except (ResourceExhausted, Exception) as e:
-        logger.error(f"Diet Plan Error: {str(e)}")
+    try:
+        model = get_configured_model(DietPlanSchema)
+        response = model.generate_content(prompt)
+        return DietPlanSchema.model_validate_json(response.text).model_dump()
+    except Exception as e:
+        logger.error(f"Diet Plan API Error: {str(e)}")
         return redirect('action_center')
 
 def generate_workout_plan(profile):
     """
-    Returns dict with keys: 'workout_plan', 'tips'
+    Generates a workout plan based on full biometric and lifestyle data.
+    Returns: Dict containing 'workout_plan' and 'tips'
     """
     prompt = (
-        f"Generate a 7-day workout plan. Goal: {profile.goal}, "
-        f"Activity: {profile.activity_level}, Experience: {profile.fitness_experience}, "
-        f"Days/week: {profile.workout_days_per_week}, Duration: {profile.workout_duration_minutes}min.",f"goal duration{profile.goal_timeframe_months},"f"gender{profile.gender}","total number of excercises 6."
+        f"Generate a 7-day workout plan for a {profile.gender}, age {profile.age}. "
+        f"Biometrics: BMI {profile.bmi}, Weight {profile.weight_kg}kg, Height {profile.height_cm}cm. "
+        f"Experience: {profile.fitness_experience}, Activity Level: {profile.activity_level}. "
+        f"Schedule: {profile.workout_days_per_week} days/week, {profile.workout_duration_minutes} min/session. "
+        f"Preferences: {profile.workout_preferences}. "
+        f"Health Constraints: {', '.join(profile.health_conditions or ['None'])}. "
+        f"Stress Level: {profile.stress_level}. "
+        "Rules: Provide exactly 6 exercises per day. If health conditions exist, provide low-impact alternatives."
     )
 
     try:
-        model = genai.GenerativeModel(
-            model_name=MODEL_NAME,
-            generation_config={
-                "response_mime_type": "application/json",
-                "response_schema": WorkoutPlanSchema,
-                "temperature": 0.7,
-            }
-        )
-        model_response = model.generate_content(prompt)
-        data= WorkoutPlanSchema.model_validate_json(model_response.text).model_dump()
-        print(data)
-        return data
-    
-    except (ResourceExhausted, Exception) as e:
-        logger.error(f"Workout Plan Error: {str(e)}")
-        return redirect('action_center')
+        model = get_configured_model(WorkoutPlanSchema)
+        response = model.generate_content(prompt)
+        return WorkoutPlanSchema.model_validate_json(response.text).model_dump()
+    except Exception as e:
+        logger.error(f"Workout Plan API Error: {str(e)}")
+        return get_workout_fallback()
 
-def get_fallback_plan() -> dict:
-    """Matches your original fallback structure exactly."""
+# -------------------------------------------------------------------
+# 4. Fallback Data (Specific to Request Type)
+# -------------------------------------------------------------------
+
+def get_diet_fallback():
     return {
         "diet_plan": [
-            {"day": "Monday", "meals": ["Oatmeal with fruits", "Grilled chicken with rice", "Salmon with vegetables"]},
-            # ... (rest of your existing fallback days)
+            {"day": "Monday", "meals": ["Poha (300 kcal)", "Dal Tadka & Rice (450 kcal)", "Paneer Tikka (400 kcal)"]},
+            {"day": "Tuesday", "meals": ["Oats Upma (250 kcal)", "Vegetable Khichdi (400 kcal)", "Moong Dal Chilla (350 kcal)"]},
         ],
+        "tips": ["Drink 3L water", "Avoid sugar", "Prioritize protein"]
+    }
+
+def get_workout_fallback():
+    return {
         "workout_plan": [
-            {"day": "Monday", "workout": "Chest & Triceps (45 min)"},
-            # ... (rest of your existing fallback days)
+            {
+                "day": "Monday", 
+                "focus": "Full Body", 
+                "calories": 350, 
+                "duration_min": 45, 
+                "exercises": [
+                    {"name": "Bodyweight Squats", "sets": 3, "reps": 15, "rest_sec": 60},
+                    {"name": "Push-ups", "sets": 3, "reps": 12, "rest_sec": 60}
+                ]
+            }
         ],
-        "tips": ["Stay hydrated", "Sleep 7–9 hours", "Warm up before workouts", "Be consistent"],
+        "tips": ["Warm up for 10 mins", "Focus on form", "Consistency is key"]
     }

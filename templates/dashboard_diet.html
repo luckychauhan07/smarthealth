@@ -60,68 +60,115 @@
 			</div>
 		</nav>
 
-		<main class="max-w-6xl mx-auto py-12 px-4">
+		<main class="max-w-6xl mx-auto py-12 px-4 space-y-10">
 			{% if plan %}
 			<section>
-				<div class="flex items-center gap-3 mb-10">
-					<span class="text-5xl">🥗</span>
-					<h1 class="text-4xl font-bold text-slate-900">
-						Weekly Meal Plan
-					</h1>
+				<div class="flex flex-wrap items-center justify-between gap-3 mb-8">
+					<div class="flex items-center gap-3">
+						<span class="text-5xl">🥗</span>
+						<div>
+							<h1 class="text-4xl font-bold text-slate-900">Weekly Meal Plan</h1>
+							<p class="text-slate-600">Structured 7-day diet plan with calorie-aware meals.</p>
+						</div>
+					</div>
+					<span class="px-4 py-2 bg-emerald-100 text-emerald-700 rounded-full text-sm font-semibold">{{ plan.diet_plan|length }} days</span>
 				</div>
 
 				<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
 					{% for day_plan in plan.diet_plan %}
-					<div
-						class="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition transform hover:scale-105 cursor-pointer"
-					>
-						<div
-							class="bg-gradient-to-r from-emerald-400 to-green-500 h-20 flex items-center px-6"
-						>
-							<h3 class="text-2xl font-bold text-white">
-								{{ day_plan.day }}
-							</h3>
+					<div class="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition">
+						<div class="bg-gradient-to-r from-emerald-400 to-green-500 px-6 py-4">
+							<div class="flex items-center justify-between mb-2">
+								<h3 class="text-2xl font-bold text-white">{{ day_plan.day }}</h3>
+								<span class="px-3 py-1 bg-white/20 text-white rounded-full text-xs font-semibold">{{ day_plan.meals|length }} meals</span>
+							</div>
+							<div id="calorie-total-{{ forloop.counter }}" class="text-white/90 text-sm font-semibold">
+								Calculating calories...
+							</div>
 						</div>
-						<div class="p-6">
-							<ul class="space-y-3">
-								{% for meal in day_plan.meals %}
-								<li
-									class="flex gap-3 items-start text-slate-700"
-								>
-									<span class="text-green-500 text-xl mt-1"
-										>🍃</span
-									>
-									<span class="leading-relaxed"
-										>{{ meal }}</span
-									>
-								</li>
-								{% endfor %}
-							</ul>
+						<div class="p-5 space-y-4">
+							{% for meal in day_plan.meals %}
+							<div class="border-l-4 border-emerald-200 pl-3 py-2">
+								<div class="flex items-start justify-between gap-2 mb-1">
+									<span class="text-xs font-bold text-emerald-700 uppercase tracking-wide">
+										{% if 'Breakfast' in meal %}🌅 Breakfast
+										{% elif 'Lunch' in meal %}☀️ Lunch
+										{% elif 'Dinner' in meal %}🌙 Dinner
+										{% elif 'Snack' in meal %}🍎 Snack
+										{% else %}🍽️ Meal {{ forloop.counter }}
+										{% endif %}
+									</span>
+									<span class="meal-calories px-2 py-0.5 bg-orange-100 text-orange-700 rounded text-xs font-bold" data-meal="{{ meal }}">0 cal</span>
+								</div>
+								<p class="text-slate-700 text-sm leading-relaxed">{{ meal|slice:"10:" }}</p>
+							</div>
+							{% endfor %}
 						</div>
 					</div>
 					{% endfor %}
 				</div>
 			</section>
+
+			<script>
+				// Extract and display calorie information
+				document.addEventListener('DOMContentLoaded', function() {
+					document.querySelectorAll('.meal-calories').forEach(function(badge) {
+						const mealText = badge.getAttribute('data-meal');
+						const calorieMatches = mealText.match(/(\d+)\s*calor/gi);
+						
+						if (calorieMatches) {
+							const totalCalories = calorieMatches.reduce((sum, match) => {
+								const cal = parseInt(match.match(/\d+/)[0]);
+								return sum + cal;
+							}, 0);
+							badge.textContent = totalCalories + ' cal';
+						} else {
+							badge.style.display = 'none';
+						}
+					});
+
+					// Calculate daily totals
+					document.querySelectorAll('[id^="calorie-total-"]').forEach(function(totalDiv, index) {
+						const card = totalDiv.closest('.group');
+						const mealBadges = card.querySelectorAll('.meal-calories');
+						let dayTotal = 0;
+						
+						mealBadges.forEach(function(badge) {
+							const cal = parseInt(badge.textContent.match(/\d+/));
+							if (!isNaN(cal)) dayTotal += cal;
+						});
+						
+						totalDiv.innerHTML = `<span class="text-lg">🔥 ${dayTotal} cal</span> <span class="text-xs opacity-90">total</span>`;
+					});
+				});
+			</script>
+
+			{% if plan.tips %}
+			<section class="bg-white rounded-2xl shadow-lg p-6">
+				<div class="flex items-center gap-3 mb-4">
+					<span class="text-2xl">💡</span>
+					<h2 class="text-xl font-bold text-slate-900">Tips</h2>
+				</div>
+				<ul class="grid sm:grid-cols-2 gap-3">
+					{% for tip in plan.tips %}
+					<li class="flex gap-2 items-start text-slate-700">
+						<span class="text-emerald-500 font-bold">✓</span>
+						<span>{{ tip }}</span>
+					</li>
+					{% endfor %}
+				</ul>
+			</section>
+			{% endif %}
 			{% else %}
-			<section
-				class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-3xl p-16 text-center"
-			>
+			<section class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-3xl p-16 text-center">
 				<div class="max-w-2xl mx-auto">
 					<div class="text-7xl mb-6">🥗</div>
-					<h2 class="text-4xl font-bold text-slate-900 mb-4">
-						No Diet Plan Yet
-					</h2>
-					<p class="text-xl text-slate-600 mb-8">
-						Generate your personalized plan to see your weekly
-						meals.
-					</p>
-					<form method="POST" class="inline-block">
+					<h2 class="text-4xl font-bold text-slate-900 mb-4">No Diet Plan Yet</h2>
+					<p class="text-xl text-slate-600 mb-8">Generate your personalized plan to see your weekly meals.</p>
+					<form method="POST" action="{% url 'generate_diet' %}" class="inline-block">
 						{% csrf_token %}
-						<button
-							type="submit"
-							class="px-10 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-bold text-lg shadow-lg hover:shadow-2xl transition transform hover:scale-105"
-						>
-							Generate My Plan
+						<button type="submit" class="px-10 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-bold text-lg shadow-lg hover:shadow-2xl transition transform hover:scale-105">
+							Generate Diet Plan
 						</button>
 					</form>
 				</div>

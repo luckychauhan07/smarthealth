@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+import json
 
 from health.models import HealthProfile
 from planner.models import GeneratedPlan
@@ -19,10 +20,17 @@ def dashboard_view(request):
     # Dashboard should never trigger plan generation; only display existing
     # plans or guide users to Action Center.
     print(profile.goal,profile.target_weight_kg)
+    
+    # Convert plan data to JSON for JavaScript
+    diet_plan_json = json.dumps(plan.diet_plan) if plan and plan.diet_plan else '[]'
+    workout_plan_json = json.dumps(plan.workout_plan) if plan and plan.workout_plan else '[]'
+    
     return render(request, "dashboard.html", {
         "profile": profile,
         "plan": plan,
         "error_message": error_message,
+        "diet_plan_json": diet_plan_json,
+        "workout_plan_json": workout_plan_json,
     })
 def dashboard_diet(request):
     user = request.user
