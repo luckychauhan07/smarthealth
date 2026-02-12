@@ -61,104 +61,306 @@
 		</nav>
 
 		<main class="max-w-6xl mx-auto py-12 px-4 space-y-10">
+			{% if messages %}
+			<div class="space-y-3">
+				{% for message in messages %}
+				<div
+					class="flex items-start gap-3 rounded-2xl border px-5 py-4 shadow-sm {% if 'success' in message.tags %}border-green-200 bg-green-50 text-green-800{% elif 'error' in message.tags or 'danger' in message.tags %}border-red-200 bg-red-50 text-red-800{% elif 'warning' in message.tags %}border-amber-200 bg-amber-50 text-amber-800{% else %}border-indigo-200 bg-indigo-50 text-indigo-800{% endif %}"
+				>
+					<div
+						class="flex h-8 w-8 items-center justify-center rounded-full {% if 'success' in message.tags %}bg-green-100{% elif 'error' in message.tags or 'danger' in message.tags %}bg-red-100{% elif 'warning' in message.tags %}bg-amber-100{% else %}bg-indigo-100{% endif %}"
+					>
+						{% if 'success' in message.tags %}
+						<span class="text-lg">✅</span>
+						{% elif 'error' in message.tags or 'danger' in message.tags %}
+						<span class="text-lg">⛔</span>
+						{% elif 'warning' in message.tags %}
+						<span class="text-lg">⚠️</span>
+						{% else %}
+						<span class="text-lg">ℹ️</span>
+						{% endif %}
+					</div>
+					<div class="text-sm leading-relaxed">{{ message }}</div>
+				</div>
+				{% endfor %}
+			</div>
+			{% endif %}
+
 			{% if plan %}
 			<section>
-				<div class="flex flex-wrap items-center justify-between gap-3 mb-8">
-					<div class="flex items-center gap-3">
-						<span class="text-5xl">🥗</span>
-						<div>
-							<h1 class="text-4xl font-bold text-slate-900">Weekly Meal Plan</h1>
-							<p class="text-slate-600">Structured 7-day diet plan with calorie-aware meals.</p>
-						</div>
+				<!-- HEADER -->
+				<div class="flex items-center gap-4 mb-8">
+					<span class="text-5xl">🥗</span>
+					<div class="flex-1">
+						<h1 class="text-4xl font-extrabold">Weekly Meal Plan</h1>
+						<p class="text-slate-600 mt-1">
+							Structured 7-day diet plan with calorie-aware meals
+						</p>
 					</div>
 					<span class="px-4 py-2 bg-emerald-100 text-emerald-700 rounded-full text-sm font-semibold">{{ plan.diet_plan|length }} days</span>
 				</div>
 
-				<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+				<!-- DIET DAY CONTAINER -->
+				<div id="dietContainer">
 					{% for day_plan in plan.diet_plan %}
-					<div class="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition">
-						<div class="bg-gradient-to-r from-emerald-400 to-green-500 px-6 py-4">
-							<div class="flex items-center justify-between mb-2">
-								<h3 class="text-2xl font-bold text-white">{{ day_plan.day }}</h3>
-								<span class="px-3 py-1 bg-white/20 text-white rounded-full text-xs font-semibold">{{ day_plan.meals|length }} meals</span>
-							</div>
-							<div id="calorie-total-{{ forloop.counter }}" class="text-white/90 text-sm font-semibold">
-								Calculating calories...
-							</div>
-						</div>
-						<div class="p-5 space-y-4">
-							{% for meal in day_plan.meals %}
-							<div class="border-l-4 border-emerald-200 pl-3 py-2">
-								<div class="flex items-start justify-between gap-2 mb-1">
-									<span class="text-xs font-bold text-emerald-700 uppercase tracking-wide">
-										{% if 'Breakfast' in meal %}🌅 Breakfast
-										{% elif 'Lunch' in meal %}☀️ Lunch
-										{% elif 'Dinner' in meal %}🌙 Dinner
-										{% elif 'Snack' in meal %}🍎 Snack
-										{% else %}🍽️ Meal {{ forloop.counter }}
-										{% endif %}
-									</span>
-									<span class="meal-calories px-2 py-0.5 bg-orange-100 text-orange-700 rounded text-xs font-bold" data-meal="{{ meal }}">0 cal</span>
+					<div
+						class="diet-day {% if forloop.first %}active{% endif %} hidden"
+						data-day="{{ forloop.counter0 }}"
+					>
+						<div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+							<div class="bg-gradient-to-r from-emerald-400 to-green-500 px-6 py-4">
+								<div class="flex items-center justify-between mb-2">
+									<h3 class="text-3xl font-bold text-white">{{ day_plan.day }}</h3>
+									<span class="px-3 py-1 bg-white/20 text-white rounded-full text-xs font-semibold">{{ day_plan.meals|length }} meals</span>
 								</div>
-								<p class="text-slate-700 text-sm leading-relaxed">{{ meal|slice:"10:" }}</p>
+								<div id="calorie-total-{{ forloop.counter }}" class="text-white/90 text-sm font-semibold">
+									Calculating calories...
+								</div>
 							</div>
-							{% endfor %}
+							<div class="p-5 space-y-4">
+								{% for meal in day_plan.meals %}
+								<div class="border-l-4 border-emerald-200 pl-3 py-2">
+									<div class="flex items-start justify-between gap-2 mb-1">
+										<span class="text-xs font-bold text-emerald-700 uppercase tracking-wide">
+											{% if 'Breakfast' in meal %}🌅 Breakfast
+											{% elif 'Lunch' in meal %}☀️ Lunch
+											{% elif 'Dinner' in meal %}🌙 Dinner
+											{% elif 'Snack' in meal %}🍎 Snack
+											{% else %}🍽️ Meal {{ forloop.counter }}
+											{% endif %}
+										</span>
+										<span class="meal-calories px-2 py-0.5 bg-orange-100 text-orange-700 rounded text-xs font-bold" data-meal="{{ meal }}">0 cal</span>
+									</div>
+									<p class="text-slate-700 text-sm leading-relaxed">{{ meal|slice:"10:" }}</p>
+								</div>
+								{% endfor %}
+							</div>
 						</div>
 					</div>
 					{% endfor %}
 				</div>
+
+				<!-- Day Navigator -->
+				<div class="flex items-center justify-center gap-4 mb-8 mt-4">
+					<button
+						id="dietPrevDay"
+						class="px-4 py-2 bg-emerald-500 text-white rounded-lg font-semibold hover:bg-emerald-600 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+					>
+						<svg
+							class="w-5 h-5"
+							fill="none"
+							stroke="currentColor"
+							viewBox="0 0 24 24"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M15 19l-7-7 7-7"
+							/>
+						</svg>
+						Previous
+					</button>
+
+					<div class="flex gap-2">
+						{% for day_plan in plan.diet_plan %}
+						<button
+							class="diet-day-dot w-3 h-3 rounded-full bg-slate-300 hover:bg-emerald-400 transition"
+							data-day="{{ forloop.counter0 }}"
+						></button>
+						{% endfor %}
+					</div>
+
+					<button
+						id="dietNextDay"
+						class="px-4 py-2 bg-emerald-500 text-white rounded-lg font-semibold hover:bg-emerald-600 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+					>
+						Next
+						<svg
+							class="w-5 h-5"
+							fill="none"
+							stroke="currentColor"
+							viewBox="0 0 24 24"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M9 5l7 7-7 7"
+							/>
+						</svg>
+					</button>
+				</div>
+
+				<!-- Progress Indicator -->
+				<div class="mt-8 text-center">
+					<p class="text-slate-600 font-medium">
+						Day <span id="currentDietDayNumber">1</span> of {{ plan.diet_plan|length }}
+					</p>
+				</div>
+
+				<!-- TIPS (Collapsible) -->
+				{% if plan.tips %}
+				<div
+					class="bg-emerald-50 border-l-4 border-emerald-500 rounded-xl p-6 mb-8"
+				>
+					<button
+						id="dietToggleTips"
+						class="w-full text-left flex items-center justify-between"
+					>
+						<h2 class="text-xl font-bold flex items-center gap-2">
+							💡 Nutrition Tips
+						</h2>
+						<svg
+							id="dietTipsIcon"
+							class="w-5 h-5 transform transition-transform"
+							fill="none"
+							stroke="currentColor"
+							viewBox="0 0 24 24"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M19 9l-7 7-7-7"
+							/>
+						</svg>
+					</button>
+					<ul id="dietTipsList" class="space-y-2 mt-4 hidden">
+						{% for tip in plan.tips %}
+						<li class="flex gap-2 text-slate-700">
+							<span class="text-emerald-500 font-bold">✓</span>
+							<span>{{ tip }}</span>
+						</li>
+						{% endfor %}
+					</ul>
+				</div>
+				{% endif %}
 			</section>
 
 			<script>
+				function extractCalories(text) {
+					const kcalMatches = [...text.matchAll(/(\d+)\s*kcal/gi)];
+					if (kcalMatches.length) {
+						return kcalMatches.reduce((sum, m) => sum + parseInt(m[1]), 0);
+					}
+					const calMatches = [...text.matchAll(/(\d+)\s*calor(?:ies)?/gi)];
+					if (calMatches.length) {
+						return calMatches.reduce((sum, m) => sum + parseInt(m[1]), 0);
+					}
+					return null;
+				}
+
 				// Extract and display calorie information
-				document.addEventListener('DOMContentLoaded', function() {
-					document.querySelectorAll('.meal-calories').forEach(function(badge) {
-						const mealText = badge.getAttribute('data-meal');
-						const calorieMatches = mealText.match(/(\d+)\s*calor/gi);
-						
-						if (calorieMatches) {
-							const totalCalories = calorieMatches.reduce((sum, match) => {
-								const cal = parseInt(match.match(/\d+/)[0]);
-								return sum + cal;
-							}, 0);
-							badge.textContent = totalCalories + ' cal';
+				document.querySelectorAll('.meal-calories').forEach(function(badge) {
+					const mealText = badge.getAttribute('data-meal') || '';
+					const cal = extractCalories(mealText);
+					if (cal !== null) {
+						badge.textContent = cal + ' cal';
+						badge.dataset.calories = cal;
+					} else {
+						badge.style.display = 'none';
+					}
+				});
+
+				// Calculate daily totals
+				document.querySelectorAll('[id^="calorie-total-"]').forEach(function(totalDiv) {
+					const card = totalDiv.closest('.diet-day');
+					const mealBadges = card.querySelectorAll('.meal-calories');
+					let dayTotal = 0;
+					
+					mealBadges.forEach(function(badge) {
+						const cal = parseInt(badge.dataset.calories, 10);
+						if (!isNaN(cal)) dayTotal += cal;
+					});
+					
+					totalDiv.innerHTML = `<span class="text-lg">🔥 ${dayTotal} cal</span> <span class="text-xs opacity-90">total</span>`;
+				});
+
+				// Day navigation
+				let currentDietDay = 0;
+				const totalDietDays = {{ plan.diet_plan|length }};
+				const dietDays = document.querySelectorAll('.diet-day');
+				const dietPrevBtn = document.getElementById('dietPrevDay');
+				const dietNextBtn = document.getElementById('dietNextDay');
+				const dietDayDots = document.querySelectorAll('.diet-day-dot');
+				const currentDietDayNumber = document.getElementById('currentDietDayNumber');
+
+				function showDietDay(index) {
+					dietDays.forEach((day, i) => {
+						if (i === index) {
+							day.classList.remove('hidden');
+							day.classList.add('active');
 						} else {
-							badge.style.display = 'none';
+							day.classList.add('hidden');
+							day.classList.remove('active');
 						}
 					});
 
-					// Calculate daily totals
-					document.querySelectorAll('[id^="calorie-total-"]').forEach(function(totalDiv, index) {
-						const card = totalDiv.closest('.group');
-						const mealBadges = card.querySelectorAll('.meal-calories');
-						let dayTotal = 0;
-						
-						mealBadges.forEach(function(badge) {
-							const cal = parseInt(badge.textContent.match(/\d+/));
-							if (!isNaN(cal)) dayTotal += cal;
-						});
-						
-						totalDiv.innerHTML = `<span class="text-lg">🔥 ${dayTotal} cal</span> <span class="text-xs opacity-90">total</span>`;
+					dietDayDots.forEach((dot, i) => {
+						if (i === index) {
+							dot.classList.remove('bg-slate-300');
+							dot.classList.add('bg-emerald-600', 'scale-125');
+						} else {
+							dot.classList.add('bg-slate-300');
+							dot.classList.remove('bg-emerald-600', 'scale-125');
+						}
+					});
+
+					dietPrevBtn.disabled = index === 0;
+					dietNextBtn.disabled = index === totalDietDays - 1;
+					currentDietDayNumber.textContent = index + 1;
+					window.scrollTo({ top: 0, behavior: 'smooth' });
+				}
+
+				dietPrevBtn.addEventListener('click', () => {
+					if (currentDietDay > 0) {
+						currentDietDay--;
+						showDietDay(currentDietDay);
+					}
+				});
+
+				dietNextBtn.addEventListener('click', () => {
+					if (currentDietDay < totalDietDays - 1) {
+						currentDietDay++;
+						showDietDay(currentDietDay);
+					}
+				});
+
+				dietDayDots.forEach((dot, index) => {
+					dot.addEventListener('click', () => {
+						currentDietDay = index;
+						showDietDay(currentDietDay);
 					});
 				});
+
+				// Tips toggle
+				const dietToggleTips = document.getElementById('dietToggleTips');
+				const dietTipsList = document.getElementById('dietTipsList');
+				const dietTipsIcon = document.getElementById('dietTipsIcon');
+
+				if (dietToggleTips) {
+					dietToggleTips.addEventListener('click', () => {
+						dietTipsList.classList.toggle('hidden');
+						dietTipsIcon.classList.toggle('rotate-180');
+					});
+				}
+
+				// Keyboard navigation
+				document.addEventListener('keydown', (e) => {
+					if (e.key === 'ArrowLeft' && currentDietDay > 0) {
+						currentDietDay--;
+						showDietDay(currentDietDay);
+					} else if (e.key === 'ArrowRight' && currentDietDay < totalDietDays - 1) {
+						currentDietDay++;
+						showDietDay(currentDietDay);
+					}
+				});
+
+				// Initialize
+				showDietDay(currentDietDay);
 			</script>
 
-			{% if plan.tips %}
-			<section class="bg-white rounded-2xl shadow-lg p-6">
-				<div class="flex items-center gap-3 mb-4">
-					<span class="text-2xl">💡</span>
-					<h2 class="text-xl font-bold text-slate-900">Tips</h2>
-				</div>
-				<ul class="grid sm:grid-cols-2 gap-3">
-					{% for tip in plan.tips %}
-					<li class="flex gap-2 items-start text-slate-700">
-						<span class="text-emerald-500 font-bold">✓</span>
-						<span>{{ tip }}</span>
-					</li>
-					{% endfor %}
-				</ul>
-			</section>
-			{% endif %}
 			{% else %}
 			<section class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-3xl p-16 text-center">
 				<div class="max-w-2xl mx-auto">

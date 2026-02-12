@@ -130,83 +130,83 @@ import google.generativeai as genai
 from django.conf import settings
 
 
-@require_GET
-def gemini_api_test(request):
-    import json, traceback
-    from django.http import JsonResponse
-    from django.conf import settings
-    import google.generativeai as genai
+# @require_GET
+# def gemini_api_test(request):
+#     import json, traceback
+#     from django.http import JsonResponse
+#     from django.conf import settings
+#     import google.generativeai as genai
 
-    try:
-        genai.configure(api_key=settings.GEMINI_API_KEY)
+#     try:
+#         genai.configure(api_key=settings.GEMINI_API_KEY)
 
-        model = genai.GenerativeModel(
-            model_name="models/gemini-2.5-flash",
-            generation_config={
-                "response_mime_type": "application/json",
-                "temperature": 0.6,
-                "max_output_tokens": 1024,  # 🔥 IMPORTANT
-            },
-        )
+#         model = genai.GenerativeModel(
+#             model_name="models/gemini-2.5-flash",
+#             generation_config={
+#                 "response_mime_type": "application/json",
+#                 "temperature": 0.6,
+#                 "max_output_tokens": 1024,  # 🔥 IMPORTANT
+#             },
+#         )
 
-        prompt = (
-            "Generate a 7-day workout plan in STRICT JSON.\n"
-            "Return ONLY valid JSON. No markdown. No explanation.\n\n"
-            "{"
-            '"workout_plan":[{'
-            '"day":"Day 1",'
-            '"focus":"string",'
-            '"calories":number,'
-            '"duration_min":number,'
-            '"exercises":[{'
-            '"name":"string",'
-            '"sets":number|null,'
-            '"reps":number|null,'
-            '"duration_sec":number|null,'
-            '"rest_sec":number'
-            '}]}],'
-            '"tips":["string"]'
-            "}\n\n"
-            "Rules:\n"
-            "- Include 1 rest day\n"
-            "- Strength: sets/reps\n"
-            "- Cardio: duration_sec\n"
-            "- Use null if not applicable\n\n"
-            "User:\n"
-            "Goal: muscle gain\n"
-            "Weight: 50 kg\n"
-            "Height: 156 cm\n"
-            "Activity: mid level\n"
-            "Experience: beginner\n"
-            "Workout days/week: 6\n"
-            "Duration/session: 45 min\n"
-            "Health conditions: None"
-        )
+#         prompt = (
+#             "Generate a 7-day workout plan in STRICT JSON.\n"
+#             "Return ONLY valid JSON. No markdown. No explanation.\n\n"
+#             "{"
+#             '"workout_plan":[{'
+#             '"day":"Day 1",'
+#             '"focus":"string",'
+#             '"calories":number,'
+#             '"duration_min":number,'
+#             '"exercises":[{'
+#             '"name":"string",'
+#             '"sets":number|null,'
+#             '"reps":number|null,'
+#             '"duration_sec":number|null,'
+#             '"rest_sec":number'
+#             '}]}],'
+#             '"tips":["string"]'
+#             "}\n\n"
+#             "Rules:\n"
+#             "- Include 1 rest day\n"
+#             "- Strength: sets/reps\n"
+#             "- Cardio: duration_sec\n"
+#             "- Use null if not applicable\n\n"
+#             "User:\n"
+#             "Goal: muscle gain\n"
+#             "Weight: 50 kg\n"
+#             "Height: 156 cm\n"
+#             "Activity: mid level\n"
+#             "Experience: beginner\n"
+#             "Workout days/week: 6\n"
+#             "Duration/session: 45 min\n"
+#             "Health conditions: None"
+#         )
 
-        response = model.generate_content(prompt)
+#         response = model.generate_content(prompt)
 
-        raw = response.text.strip()
-        print("RAW GEMINI RESPONSE:\n", raw)
+#         raw = response.text.strip()
+#         print("RAW GEMINI RESPONSE:\n", raw)
 
-        # 🔐 Extract JSON safely
-        start = raw.find("{")
-        end = raw.rfind("}")
+#         # 🔐 Extract JSON safely
+#         start = raw.find("{")
+#         end = raw.rfind("}")
 
-        if start == -1 or end == -1:
-            raise ValueError("Gemini response does not contain JSON")
+#         if start == -1 or end == -1:
+#             raise ValueError("Gemini response does not contain JSON")
 
-        json_text = raw[start:end + 1]
+#         json_text = raw[start:end + 1]
 
-        data = json.loads(json_text)
+#         data = json.loads(json_text)
 
-        return JsonResponse({
-            "success": True,
-            "gemini_response": data
-        })
+#         return JsonResponse({
+#             "success": True,
+#             "gemini_response": data
+#         })
 
-    except Exception as e:
-        traceback.print_exc()
-        return JsonResponse({
-            "success": False,
-            "error": str(e)
-        }, status=500)
+#     except Exception as e:
+#         traceback.print_exc()
+#         return JsonResponse({
+#             "success": False,
+#             "error": str(e)
+#         }, status=500)

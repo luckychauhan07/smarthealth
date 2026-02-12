@@ -64,6 +64,31 @@
 		</nav>
 
 		<main class="max-w-5xl mx-auto py-12 px-4">
+			{% if messages %}
+			<div class="space-y-3 mb-8">
+				{% for message in messages %}
+				<div
+					class="flex items-start gap-3 rounded-2xl border px-5 py-4 shadow-sm {% if 'success' in message.tags %}border-green-200 bg-green-50 text-green-800{% elif 'error' in message.tags or 'danger' in message.tags %}border-red-200 bg-red-50 text-red-800{% elif 'warning' in message.tags %}border-amber-200 bg-amber-50 text-amber-800{% else %}border-indigo-200 bg-indigo-50 text-indigo-800{% endif %}"
+				>
+					<div
+						class="flex h-8 w-8 items-center justify-center rounded-full {% if 'success' in message.tags %}bg-green-100{% elif 'error' in message.tags or 'danger' in message.tags %}bg-red-100{% elif 'warning' in message.tags %}bg-amber-100{% else %}bg-indigo-100{% endif %}"
+					>
+						{% if 'success' in message.tags %}
+						<span class="text-lg">✅</span>
+						{% elif 'error' in message.tags or 'danger' in message.tags %}
+						<span class="text-lg">⛔</span>
+						{% elif 'warning' in message.tags %}
+						<span class="text-lg">⚠️</span>
+						{% else %}
+						<span class="text-lg">ℹ️</span>
+						{% endif %}
+					</div>
+					<div class="text-sm leading-relaxed">{{ message }}</div>
+				</div>
+				{% endfor %}
+			</div>
+			{% endif %}
+
 			{% if plan and plan.workout_plan %}
 
 			<section>

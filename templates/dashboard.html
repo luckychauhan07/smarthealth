@@ -64,9 +64,37 @@
 		</nav>
 
 		<main class="max-w-6xl mx-auto py-12 px-4 space-y-8">
+			{% if messages %}
+			<div class="space-y-3">
+				{% for message in messages %}
+				<div
+					class="flex items-start gap-3 rounded-2xl border px-5 py-4 shadow-sm {% if 'success' in message.tags %}border-green-200 bg-green-50 text-green-800{% elif 'error' in message.tags or 'danger' in message.tags %}border-red-200 bg-red-50 text-red-800{% elif 'warning' in message.tags %}border-amber-200 bg-amber-50 text-amber-800{% else %}border-indigo-200 bg-indigo-50 text-indigo-800{% endif %}"
+				>
+					<div
+						class="flex h-8 w-8 items-center justify-center rounded-full {% if 'success' in message.tags %}bg-green-100{% elif 'error' in message.tags or 'danger' in message.tags %}bg-red-100{% elif 'warning' in message.tags %}bg-amber-100{% else %}bg-indigo-100{% endif %}"
+					>
+						{% if 'success' in message.tags %}
+						<span class="text-lg">✅</span>
+						{% elif 'error' in message.tags or 'danger' in message.tags %}
+						<span class="text-lg">⛔</span>
+						{% elif 'warning' in message.tags %}
+						<span class="text-lg">⚠️</span>
+						{% else %}
+						<span class="text-lg">ℹ️</span>
+						{% endif %}
+					</div>
+					<div class="text-sm leading-relaxed">{{ message }}</div>
+				</div>
+				{% endfor %}
+			</div>
+			{% endif %}
+
 			{% if error_message %}
-			<div class="bg-red-100 border-l-4 border-red-500 p-4 rounded-lg">
-				<p class="text-red-700 font-semibold">⚠️ {{ error_message }}</p>
+			<div class="flex items-start gap-3 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-red-800 shadow-sm">
+				<div class="flex h-8 w-8 items-center justify-center rounded-full bg-red-100">
+					<span class="text-lg">⛔</span>
+				</div>
+				<div class="text-sm leading-relaxed">{{ error_message }}</div>
 			</div>
 			{% endif %}
 
@@ -165,20 +193,31 @@
 							</script>
 							<script>
 								document.addEventListener('DOMContentLoaded', function() {
-									let total = 0;
-									document.querySelectorAll('.meal-cal').forEach(function(badge) {
-										const mealText = badge.getAttribute('data-meal');
-										const matches = mealText.match(/(\d+)\s*calor/gi);
-										if (matches) {
-											const cal = matches.reduce((sum, m) => sum + parseInt(m.match(/\d+/)[0]), 0);
-											badge.textContent = cal + ' cal';
-											total += cal;
-										} else {
-											badge.style.display = 'none';
-										}
-									});
-									const totalDiv = document.getElementById('today-calories');
-									if (totalDiv && total > 0) totalDiv.textContent = '🔥 ' + total + ' cal';
+					function extractCalories(text) {
+						const kcalMatches = [...text.matchAll(/(\d+)\s*kcal/gi)];
+						if (kcalMatches.length) {
+							return kcalMatches.reduce((sum, m) => sum + parseInt(m[1]), 0);
+						}
+						const calMatches = [...text.matchAll(/(\d+)\s*calor(?:ies)?/gi)];
+						if (calMatches.length) {
+							return calMatches.reduce((sum, m) => sum + parseInt(m[1]), 0);
+						}
+						return null;
+					}
+
+					let total = 0;
+					document.querySelectorAll('.meal-cal').forEach(function(badge) {
+						const mealText = badge.getAttribute('data-meal') || '';
+						const cal = extractCalories(mealText);
+						if (cal !== null) {
+							badge.textContent = cal + ' cal';
+							total += cal;
+						} else {
+							badge.style.display = 'none';
+						}
+					});
+					const totalDiv = document.getElementById('today-calories');
+					if (totalDiv && total > 0) totalDiv.textContent = '🔥 ' + total + ' cal';
 								});
 
 								function toggleMeals() {

@@ -2,12 +2,13 @@ from django.urls import path
 
 from . import views
 
-from .views import register_view, login_view, logout_view
+from .views import register_view, login_view, logout_view, verify_otp_view
 
 urlpatterns = [
     path('register/', register_view, name='register'),
+    path('verify-otp/', verify_otp_view, name='verify_otp'),
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),
     # accounts/urls.py
-path("action-center/", views.action_center, name="action_center"),
+    path("action-center/", views.action_center, name="action_center"),
 ]
